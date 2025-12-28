@@ -12,37 +12,81 @@
 
 ## Kubectl Commands
 ```
-kubectl apply -f pod.yaml (apply a manifest file)
+- To quickly run a pod:
+kubectl run <pod_name> --image=<image>  
 
-kubectl describe pod <pod_name> (view pod specs and state)
 
-kubectl edit pod <pod_name> (edit pod manifest)
+- To apply a manifest file:
+kubectl apply -f pod.yaml
 
-kubectl logs <pod_name> (print logs of a pod)
 
-kubectl exec -it <pod_name> -- sh (open a interactive shell)
+- To view pod specs and state:
+kubectl describe pod <pod_name>
 
-kubectl label pod <pod_name> <label>=<value> (add label to a pod)
 
-kubectl label pod <pod_name> <label>- (remove label from a pod)
+- To edit a resource manifest:
+kubectl edit <resource> <name>
 
-kubectl get pods -l <label>=<value> (filter pods by label)
 
-kubectl scale deployment <name> --replicas=<number> (slaces replicaset of a deployment)
+- To print logs:
+kubectl logs <pod_name>|job/<job_name>
 
-kubectl set image <resource> <resource_name> <container_name>=<image> (sets container image in a resource such as a pod or a deployment )
 
-kubectl rollout status deployment <name> (watch rollout)
+- To open a interactive shell inside pod:
+kubectl exec -it <pod_name> -- sh
 
-kubectl rollout undo deployment <name> (rollback a rollout)
+
+- To add label to a resource:
+kubectl label <resource> <name> <label>=<value>
+
+
+- To remove label from a resource:
+kubectl label <resource> <name> <label>-
+
+
+- To filter resources by label:
+kubectl get <resource>s -l <label>=<value> 
+
+
+- To slace replicaset of a deployment:
+kubectl scale deployment <name> --replicas=<number>
+
+
+- To set container image in a resource such as a pod or a deployment:
+kubectl set image <resource> <resource_name> <container_name>=<image>
+
+
+- To view rollout status:
+kubectl rollout status deployment <name>
+
+
+- To rollback a rollout:
+kubectl rollout undo deployment <name>
+
+
+- To create a job:
+kubectl create job <name> --image=<image> -- <command>
+
+
+- To create a cronjob:
+kubectl create cronjob <name> --image=<image> --schedule="<schedule>" -- <command>
 
 ```
 
 ## Notes
 
-- **All containers in a pod shares the same network namespace** </br>
+- **All containers in a pod shares the same network namespace.** </br>
 That means one ip address per pod, one loopback interface(localhost) and same port space.
-
+</br></br>
 - **Deployment prioritizes availability over exact replica count during updates.** </br>
 Temporary over- or under-provisioning is normal. For example, when maxSurge is set to %25 for a rolling update and replica count is 4, rollout process can create an extra pod just to keep availability at a desired level.
-
+</br></br>
+- **Jobs treat each Pod execution as an immutable attempt.**<br>
+    - Clear success/failure tracking
+    - Accurate retry counting
+    - Clean seperation of attempts
+</br></br>
+- **Kubernetes DNS creates a DNS record for each Service name that resolves to its ClusterIP.**</br>
+Service load-balances to matching Pod IPs.
+</br></br>
+- **A service selects Pods using label selectors and forwards traffic to their IPs.**
