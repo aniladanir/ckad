@@ -3,12 +3,29 @@
 ## Definitions
 **Pod:** A Pod is the smallest deployable unit in Kubernetes that runs one or more containers sharing network and storage, scheduled onto a single node.
 
+**Deployment:** A deployment manages replicasets to ensure a desired number of identical pods are running and kept in the desired state.
+
 **emptyDir:** A volume type that provides ephemeral(temporary) shared storage for containers in the same Pod.
 - Created when pod starts and deleted when pod dies.
 - Shared between containers
 - Lives on the node
 
-**Deployment:** A deployment manages replicasets to ensure a desired number of identical pods are running and kept in the desired state.
+**hostPath:** A volume type that mounts a file or directory from the host node's filesystem into your Pod.
+- Access to the host filesystem can expose security risks.
+- Need to monitor the disk usage manually.
+- Identical pods may behave differently due to different files on the nodes. (node-specific behaviour)</br> 
+**Note: *Due to these reasons, hostPath usage is discouraged in production.*
+
+**PersistentVolume (PV):** A PersistentVolume (PV) is a piece of storage in the cluster that has been provisioned by an administrator or dynamically provisioned using Storage Classes. It is a resource in the cluster just like a node is a cluster resource.
+
+**Storage Class:** A template or recipe for creating storage. It does not represent any actual storage itself. It is used to define a "class" or "tier" of storage.
+
+**PersistentVolumeClaim (PVC):** A request for storage by a user. It is similar to a Pod. Pods consume node resources and PVCs consume PV resources. PVCs allow applications to request persistent storage without knowing how or where that storage is implemented. </br> 
+Access Modes:
+- *ReadWriteOnce*: can be mounted by  a single node, multiple pods
+- *ReadWriteMany*: can be mounted by multiple nodes
+- *ReadWriteOncePod*: can be mounted by one pod
+- *ReadOnlyMany*: can be mounted by multiple nodes as read-only
 
 ## Kubectl Commands
 ```
@@ -89,4 +106,10 @@ Temporary over- or under-provisioning is normal. For example, when maxSurge is s
 - **Kubernetes DNS creates a DNS record for each Service name that resolves to its ClusterIP.**</br>
 Service load-balances to matching Pod IPs.
 </br></br>
-- **A service selects Pods using label selectors and forwards traffic to their IPs.**
+- **A service selects Pods using selectors and forwards traffic to their IPs.**
+</br></br>
+- **Pods use PVCs to request persistent storage without knowing the underlying storage implementation.**
+</br></br>
+- **The first pod that successfully mounts a ReadWriteOnce PVC will cause its underlying PV to be attached to the node where that pod is scheduled.**
+</br></br>
+- **Deployments that use a single ReadWriteOnce PVC may not scale across multiple nodes.**
