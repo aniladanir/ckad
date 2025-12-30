@@ -27,11 +27,13 @@ Access Modes:
 - *ReadWriteOncePod*: can be mounted by one pod
 - *ReadOnlyMany*: can be mounted by multiple nodes as read-only
 
+**ConfigMap:** A ConfigMap is an API object used to store non-confidential data in key-value pairs. Pods can consume ConfigMaps as environment variables, command-line arguments, or as configuration files in a volume.</br>
+Configmaps are stored in cluster's etcd.
+
 ## Kubectl Commands
 ```
 - To quickly run a pod:
-kubectl run <pod_name> --image=<image>  
-
+kubectl run <pod_name> --image=<image> (--command -- sh -c "sleep 3600")
 
 - To apply a manifest file:
 kubectl apply -f pod.yaml
@@ -88,6 +90,13 @@ kubectl create job <name> --image=<image> -- <command>
 - To create a cronjob:
 kubectl create cronjob <name> --image=<image> --schedule="<schedule>" -- <command>
 
+
+- To create configmap from file:
+kubectl create configmap <name> --from-file=<file_key>=<file_name>
+
+- To create configmap from literals:
+kubectl create configmap <name> --from-literal=<key1>=<value1> --from-literal=<key2>=<value2> ...
+
 ```
 
 ## Notes
@@ -113,3 +122,14 @@ Service load-balances to matching Pod IPs.
 - **The first pod that successfully mounts a ReadWriteOnce PVC will cause its underlying PV to be attached to the node where that pod is scheduled.**
 </br></br>
 - **Deployments that use a single ReadWriteOnce PVC may not scale across multiple nodes.**
+</br></br>
+- **Use env vars for static startup config; use ConfigMap volumes for dynamic or file-based config. [(see deployment file)](/manifests/configmap/deployment.yaml)**</br>
+When building a manifest file, use envFrom if configs are static, and mount file-based ConfigMap if configs are dynamic.
+    - ConfigMap volumes can update while the Pod is running
+    - Environment variables cannot
+
+- **Why prefer volume mounted configmaps (file-based)**
+    1. Large or structured config (yaml, json)
+    2. Config may change while Pod is running
+    3. App expects filesystem-based config
+                
