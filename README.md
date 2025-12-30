@@ -132,4 +132,13 @@ When building a manifest file, use envFrom if configs are static, and mount file
     1. Large or structured config (yaml, json)
     2. Config may change while Pod is running
     3. App expects filesystem-based config
+
+- **Why “encrypted ConfigMap ≠ Secret”**
+    1. *Kubernetes treats it as normal config*. It maybe logged, exposed in debug output, mounted with broader permissions etc...
+    2. *RBAC (role base access control) is different*. kubernetes lets you restrict access to secrets separately. If you store secrets in ConfigMaps, anyone with get configmaps can read them.
+    3. *Secrets have special handling.* 
+        - Can be mounted as tmpfs (in-memory). 
+        - Can be excluded from logs and debug dumps. 
+        - Can integrate with 'Encryption at rest' (etcd encryption) or external secret managers (Vault, AWS Secrets Manager, etc.)
+    4. *Secrets communicate intent.* “This data is sensitive.”
                 
