@@ -117,6 +117,8 @@ Service load-balances to matching Pod IPs.
 </br></br>
 - **A service selects Pods using selectors and forwards traffic to their IPs.**
 </br></br>
+
+#### Storage
 - **Pods use PVCs to request persistent storage without knowing the underlying storage implementation.**
 </br></br>
 - **The first pod that successfully mounts a ReadWriteOnce PVC will cause its underlying PV to be attached to the node where that pod is scheduled.**
@@ -141,4 +143,13 @@ When building a manifest file, use envFrom if configs are static, and mount file
         - Can be excluded from logs and debug dumps. 
         - Can integrate with 'Encryption at rest' (etcd encryption) or external secret managers (Vault, AWS Secrets Manager, etc.)
     4. *Secrets communicate intent.* “This data is sensitive.”
+
+#### Networking
+- **Pod IPs are cluster-wide routable. Every Pod can reach every other Pod IP directly, without NAT.**
+
+- **Pod IPs are ephemeral (temporary). They are assigned new IPs on restart.**
+
+- **One Pod = one network namespace = one IP**
+
+- **Kubernetes networking is Pod-to-Pod, flat, and IP-based — Services are just virtual IPs on top.**
                 
