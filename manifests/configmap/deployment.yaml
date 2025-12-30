@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: web
+  name: my-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - image: ubuntu
+        name: ubuntu
+        command: ["sh", "-c"]
+        args:
+          - "touch /data/anil.txt && sleep 3600"
+        resources: {}
+        envFrom:
+        - configMapRef:
+            name: app-config
+        volumeMounts:
+          - mountPath: /data
+            name: pvc-volume
+          - mountPath: /config
+            name: fileconfig
+      volumes:
+        - name: fileconfig
+          configMap:
+            name: file-config
+        - name: appconfig
+          configMap:
+            name: app-config
+
+
+status: {}
