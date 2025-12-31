@@ -30,6 +30,8 @@ Access Modes:
 **ConfigMap:** A ConfigMap is an API object used to store non-confidential data in key-value pairs. Pods can consume ConfigMaps as environment variables, command-line arguments, or as configuration files in a volume.</br>
 Configmaps are stored in cluster's etcd.
 
+**NodePort:** Exposes the Service on each Node's IP at a static port (the NodePort). To make the node port available, Kubernetes sets up a cluster IP address, the same as if you had requested a Service of type: ClusterIP.
+
 ## Kubectl Commands
 ```
 - To quickly run a pod:
@@ -118,7 +120,7 @@ Service load-balances to matching Pod IPs.
 - **A service selects Pods using selectors and forwards traffic to their IPs.**
 </br></br>
 
-#### Storage
+### Storage
 - **Pods use PVCs to request persistent storage without knowing the underlying storage implementation.**
 </br></br>
 - **The first pod that successfully mounts a ReadWriteOnce PVC will cause its underlying PV to be attached to the node where that pod is scheduled.**
@@ -144,7 +146,7 @@ When building a manifest file, use envFrom if configs are static, and mount file
         - Can integrate with 'Encryption at rest' (etcd encryption) or external secret managers (Vault, AWS Secrets Manager, etc.)
     4. *Secrets communicate intent.* “This data is sensitive.”
 
-#### Networking
+### Networking
 - **Pod IPs are cluster-wide routable. Every Pod can reach every other Pod IP directly, without NAT.**
 
 - **Pod IPs are ephemeral (temporary). They are assigned new IPs on restart.**
@@ -152,4 +154,26 @@ When building a manifest file, use envFrom if configs are static, and mount file
 - **One Pod = one network namespace = one IP**
 
 - **Kubernetes networking is Pod-to-Pod, flat, and IP-based — Services are just virtual IPs on top.**
-                
+
+- **What problem does a Service solve?**
+    - Stable Ip
+    - Stable DNS name
+    - LoadBalancing
+
+- **ClusterIP pod-to-pod traffic route:**
+     ``` 
+    Pod → web (DNS-CoreDNS)
+        ↓
+    ClusterIP (internal virtual IP)
+        ↓
+    kube-proxy (runs on node)
+        ↓
+    Endpoint (Pod IP)
+- **kube-proxy turns a virtual Service IP into real Pod IP traffic by programming node-level networking rules.**
+
+- **NodePort ≠ pod exposure**</br>
+    Nodeport exposes the service, not pods.
+
+- **A NodePort Service is still a normal ClusterIP Service internally. NodePort just adds one more way to enter that same Service.**
+
+- **When traffic arrives at a node via a NodePort, kube-proxy on that node may forward the request to any ready Pod selected by the Service, <ins>regardless of whether that Pod is running on the same node or on a different node within the cluster.<ins>**
