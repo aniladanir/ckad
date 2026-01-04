@@ -9,11 +9,12 @@
 - Created when pod starts and deleted when pod dies.
 - Shared between containers
 - Lives on the node
+- Safe and isolated to the pod
 
 **hostPath:** A volume type that mounts a file or directory from the host node's filesystem into your Pod.
-- Access to the host filesystem can expose security risks.
+- Accessing files/directories on the host node can expose security risks.
 - Need to monitor the disk usage manually.
-- Identical pods may behave differently due to different files on the nodes. (node-specific behaviour)</br> 
+- Pods using hostPath may behave differently on different nodes depending on the host's filesystem.</br> 
 **Note: *Due to these reasons, hostPath usage is discouraged in production.*
 
 **PersistentVolume (PV):** A PersistentVolume (PV) is a piece of storage in the cluster that has been provisioned by an administrator or dynamically provisioned using Storage Classes. It is a resource in the cluster just like a node is a cluster resource.
@@ -31,6 +32,29 @@ Access Modes:
 Configmaps are stored in cluster's etcd.
 
 **NodePort:** Exposes the Service on each Node's IP at a static port (the NodePort). To make the node port available, Kubernetes sets up a cluster IP address, the same as if you had requested a Service of type: ClusterIP.
+
+**Probes:** Probes are diagnostic checks performed by the kubelet (the agent that runs on each node) to determine the health and readiness of containers running within a Pod. They are crucial for ensuring the reliability and self-healing capabilities of your applications.
+
+Three main types of probes;
+- *Startup:*  Determines if a container application has started successfully. If a startup probe is configured, it disables liveness and readiness checks until it succeeds.
+- *Readiness:*  Determines if a container is ready to serve traffic. If a readiness probe fails, Kubernetes will remove the Pod's IP address from the endpoints of all Services that match the Pod.
+- *Liveness:*  Determines if a container is running and healthy. If a liveness probe fails, Kubernetes assumes the container is in a broken state and will restart the container.
+
+</br>
+There are also three main types of probe handlers;
+
+- *HTTP probe:* Sends an HTTP GET request to a specified path on a specified portUseful when app exposes HTTP endpoints. 2xx-3xx status codes are considered success. 4xx-5xx codes and other network errors are considered failure. Useful for apps that expose HTTP endpoints.
+- *TCP probe:*  Attempts to open a TCP socket on a specified port. Considered successful if TCP connection is established. Useful for apps that listen on a TCP port such as databases, message queues etc...
+- *Exec prob:* Kubelet executes a specified command inside the container. If command returns 0, it is considered success. If returns non-zero code or times out, it is considered a failure.
+
+</br>
+Timing fields for probes;
+
+- *initialDelaySeconds:* Number of seconds to wait after the container has started before the very first probe is performed.
+- *failureThreshold:* How often (in seconds) to perform the probe.
+- *timeoutSeconds:* Number of seconds after which the probe times out.
+- *failureThreshold:* Number of consecutive times a probe must fail for Kubernetes to consider the check failed.
+
 
 ## Kubectl Commands
 ```
@@ -177,3 +201,7 @@ When building a manifest file, use envFrom if configs are static, and mount file
 - **A NodePort Service is still a normal ClusterIP Service internally. NodePort just adds one more way to enter that same Service.**
 
 - **When traffic arrives at a node via a NodePort, kube-proxy on that node may forward the request to any ready Pod selected by the Service, <ins>regardless of whether that Pod is running on the same node or on a different node within the cluster.<ins>**
+
+- **Liveness probe restarts a pod on failure, readiness probe cuts traffic to a pod. They complement each other.**
+
+- **Startup protects boot, readiness protects traffic, liveness protects uptime.**
