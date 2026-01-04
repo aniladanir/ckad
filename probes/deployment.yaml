@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: probes
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: probes
+  template:
+    metadata:
+      labels:
+        app: probes
+    spec:
+      containers:
+      - name: probes
+        image: probes:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        startupProbe:
+          httpGet:
+            path: /ready
+            port: 3000
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          failureThreshold: 3
+          timeoutSeconds: 1
+          successThreshold: 1
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          failureThreshold: 3
+          timeoutSeconds: 1
+          successThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 3000
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          failureThreshold: 3
+          timeoutSeconds: 1
+          successThreshold: 1
