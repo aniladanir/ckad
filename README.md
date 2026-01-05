@@ -55,6 +55,25 @@ Timing fields for probes;
 - *timeoutSeconds:* Number of seconds after which the probe times out.
 - *failureThreshold:* Number of consecutive times a probe must fail for Kubernetes to consider the check failed.
 
+**Request:** The minimum amount of resources Kubernetes guarantees to a container. Kubernetes Scheduler uses this value to decide where to place a Pod. If no such Node exists, the Pod remains in a Pending state. If no requests are specified, Kubernetes treats them as 0.
+
+**Limit:** The maximum amount of resources a container is allowed to use. Kubelet (the agent running on each Node) enforces this limit using Linux cgroups.
+
+- *CPU*: If a container tries to use more CPU than its limit, the Linux kernel throttles the container's processes. The application will run slower, but it won't be terminated.
+- *Memory:* If a container tries to allocate more memory than its limit, Linux kernel triggers an Out-Of-Memory (OOM) kill for the container's processes. Kubelet observes that the container has stopped and reports its status as <ins>OOMKilled</ins> to the Kubernetes control plane.
+
+**Quality of Service (QoS) Classes:** Kubernetes assigns every Pod a QoS class based on the resource requests and limits of its component Containers. QoS classes are used by Kubernetes to decide which Pods to evict from a Node running low on resources like memory and cpu.</br>
+There are three QoS classes, from highest to lowest priority:
+   1. Guaranteed
+   2. Burstable
+   3. BestEffort
+   - **Guaranteed:**  Every container in the Pod must have both a memory-cpu limit and a memory-cpu request defined, and they must be the same value.
+   *BestFor*: Critical workloads that cannot tolerate downtime or performance degradation, such as databases, message queues or stateful services.
+   - **Burstable:** The Pod does not meet the criteria for Guaranteed, but at least one container in the Pod has a CPU or memory request defined. The most common pattern is setting a request lower than a limit.</br>
+   *BestFor:* The vast majority of applications such as Web servers, API backends, and stateless microservices.
+   - **BestEffort:** Assigned when no requests or limits is set. They are first to be killed.</br>
+   *BestFor:* Low-priority tasks that can be interrupted and are not critical like batch jobs, development and test containers.
+
 
 ## Kubectl Commands
 ```
@@ -205,3 +224,11 @@ When building a manifest file, use envFrom if configs are static, and mount file
 - **Liveness probe restarts a pod on failure, readiness probe cuts traffic to a pod. They complement each other.**
 
 - **Startup protects boot, readiness protects traffic, liveness protects uptime.**
+
+### Resource Management
+
+- **Limits are ignored by the scheduler. Requests are what matters.**
+
+- **Guaranteed pods are killed last because their requested resources are guaranteed and accounted for by the scheduler(request=limit), so evicting them would break scheduling guarantees.**
+
+- **Requests decide placement. Limits decide enforcement. QoS decides eviction.**
