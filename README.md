@@ -74,6 +74,8 @@ There are three QoS classes, from highest to lowest priority:
    - **BestEffort:** Assigned when no requests or limits is set. They are first to be killed.</br>
    *BestFor:* Low-priority tasks that can be interrupted and are not critical like batch jobs, development and test containers.
 
+**Priority Class:** Ayni qos class'ta bulunan iki farkli poddan once hangisinin evict edilecegine karar verilirken bakilir. lowest priority first. ONEMLI. eger priority classlari ayniysa ya da belirtilmemisse, memory requestini en cok asan pod terminate edilir.
+
 
 ## Kubectl Commands
 ```
