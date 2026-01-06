@@ -77,7 +77,11 @@ There are three QoS classes, from highest to lowest priority:
    - **BestEffort:** Assigned when no requests or limits is set. They are first to be killed.</br>
    *BestFor:* Low-priority tasks that can be interrupted and are not critical like batch jobs, development and test containers.
 
-**Priority Class:** Ayni qos class'ta bulunan iki farkli poddan once hangisinin evict edilecegine karar verilirken bakilir. lowest priority first. ONEMLI. eger priority classlari ayniysa ya da belirtilmemisse, memory requestini en cok asan pod terminate edilir.
+**Priority Class:** A PriorityClass is an object that defines a priority level for Pods. Its primary purpose is to influence the scheduling and preemption of Pods, ensuring that more critical workloads are given precedence over less important ones.
+
+1. *Scheduling Order:* When the Kubernetes scheduler has multiple Pods waiting to be scheduled, it will prioritize scheduling the Pods with a higher priority value first.
+2. *Preemption Order:*  If a high-priority Pod cannot be scheduled because there are not enough resources, the scheduler can evict (terminate and remove) lower-priority Pods from a node to make room for the high-priority Pod. The evicted Pods may be rescheduled on other nodes if resources are available.
+3. *Node Pressure Eviction:* When pods are evicted due to node running low on resources, kubelet determines if Pods are using more resources than they requested. Then it groups all candidate Pods by their priority. It will always evict Pods from the lowest priority group first. If multiple Pods exist at the same lowest priority level, the kubelet then uses their QoS class to decide the order of eviction.
 
 ## Kubectl Commands
 ```
