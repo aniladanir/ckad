@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: high-priority-dep
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: high-priority-dep
+  template:
+    metadata:
+      labels:
+        app: high-priority-dep
+    spec:
+      priorityClassName: high-priority
+      containers:
+      - name: ubuntu
+        image: ubuntu
+        command: ["sh", "-c"]
+        args:
+          - "sleep 3600"
+        resources: {}
