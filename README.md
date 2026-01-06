@@ -33,6 +33,9 @@ Configmaps are stored in cluster's etcd.
 
 **NodePort:** Exposes the Service on each Node's IP at a static port (the NodePort). To make the node port available, Kubernetes sets up a cluster IP address, the same as if you had requested a Service of type: ClusterIP.
 
+**Network Policies:** NetworkPolicies are Kubernetes resources that control how Pods are allowed to communicate with each other and with other network endpoints.
+They use label selectors to define which Pods a policy applies to, and specify allowed ingress (incoming) and egress (outgoing) traffic rules.
+
 **Probes:** Probes are diagnostic checks performed by the kubelet (the agent that runs on each node) to determine the health and readiness of containers running within a Pod. They are crucial for ensuring the reliability and self-healing capabilities of your applications.
 
 Three main types of probes;
@@ -75,7 +78,6 @@ There are three QoS classes, from highest to lowest priority:
    *BestFor:* Low-priority tasks that can be interrupted and are not critical like batch jobs, development and test containers.
 
 **Priority Class:** Ayni qos class'ta bulunan iki farkli poddan once hangisinin evict edilecegine karar verilirken bakilir. lowest priority first. ONEMLI. eger priority classlari ayniysa ya da belirtilmemisse, memory requestini en cok asan pod terminate edilir.
-
 
 ## Kubectl Commands
 ```
@@ -222,6 +224,13 @@ When building a manifest file, use envFrom if configs are static, and mount file
 - **A NodePort Service is still a normal ClusterIP Service internally. NodePort just adds one more way to enter that same Service.**
 
 - **When traffic arrives at a node via a NodePort, kube-proxy on that node may forward the request to any ready Pod selected by the Service, <ins>regardless of whether that Pod is running on the same node or on a different node within the cluster.<ins>**
+
+- **About network policies:**
+    - If no NetworkPolicy selects a Pod, all traffic is allowed.
+    - If NetworkPolicy has no ingress rules, all incoming traffic is denied to selected Pods.
+    - A pod is isolated for egress(outgoing traffic) if there is any NetworkPolicy that both selects the pod and has "Egress" in its policyTypes.
+    - NetworkPolicies are namespaced. Once a NetworkPolicy applies to a Pod, traffic from other namespaces is blocked unless the policy explicitly allows those namespaces or Pods.
+    - Network policies are additive.
 
 - **Liveness probe restarts a pod on failure, readiness probe cuts traffic to a pod. They complement each other.**
 
