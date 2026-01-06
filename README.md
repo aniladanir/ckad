@@ -70,7 +70,7 @@ There are three QoS classes, from highest to lowest priority:
    1. Guaranteed
    2. Burstable
    3. BestEffort
-   - **Guaranteed:**  Every container in the Pod must have both a memory-cpu limit and a memory-cpu request defined, and they must be the same value.
+   - **Guaranteed:**  Every container in the Pod must have both a memory-cpu limit and a memory-cpu request defined, and they must be the same value.</br>
    *BestFor*: Critical workloads that cannot tolerate downtime or performance degradation, such as databases, message queues or stateful services.
    - **Burstable:** The Pod does not meet the criteria for Guaranteed, but at least one container in the Pod has a CPU or memory request defined. The most common pattern is setting a request lower than a limit.</br>
    *BestFor:* The vast majority of applications such as Web servers, API backends, and stateless microservices.
@@ -243,3 +243,6 @@ When building a manifest file, use envFrom if configs are static, and mount file
 - **Guaranteed pods are killed last because their requested resources are guaranteed and accounted for by the scheduler(request=limit), so evicting them would break scheduling guarantees.**
 
 - **Requests decide placement. Limits decide enforcement. QoS decides eviction.**
+
+- **Memory and CPU units:**</br>-For memory units, Mi stands for Mebibyte. This is a binary unit, where 1Mi = 1024 KiB = 1024 * 1024 bytes. (Megabyte is 1000 * 1000 bytes).There is also Gibibyte(Gi) and Kibibyte(Ki).</br>
+-For cpu unit, m stands for millicores.  1000m is equivalent to 1 CPU core. So, 250m means 0.25 (one-quarter) of a CPU core, and 500m means 0.5 (half) of a CPU core.
