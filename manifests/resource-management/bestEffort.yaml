@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: besteffort
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: besteffort
+  template:
+    metadata:
+      labels:
+        app: besteffort
+    spec:
+      containers:
+      - name: ubuntu
+        image: ubuntu
+        command: ["sh", "-c"]
+        args:
+          - "sleep 3600"
+        resources: {} # 'bestEffort' qos class

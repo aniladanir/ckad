@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: burstable-guaranteed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: burstable-guaranteed
+  template:
+    metadata:
+      labels:
+        app: burstable-guaranteed
+    spec: # these pods will be assigned 'burstable' class because not every container defines strict requests and limits.
+      containers:
+      - name: ubuntu-burstable
+        image: ubuntu
+        command: ["sh", "-c"]
+        args:
+          - "sleep 3600"
+        resources: # 'burstable' qos class
+          requests:
+            memory: "100Mi"
+            cpu: "100m"
+          limits:
+            memory: "200Mi"
+            cpu: "200m"
+      - name: ubuntu-guaranteed
+        image: ubuntu
+        command: ["sh", "-c"]
+        args:
+          - "sleep 3600"
+        resources: # 'guaranteed qos class'
+          requests:
+            memory: "150Mi"
+            cpu: "150m"
+          limits:
+            memory: "150Mi"
+            cpu: "150m"

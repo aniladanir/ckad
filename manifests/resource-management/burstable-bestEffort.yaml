@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: burstable-besteffort
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: burstable-besteffort
+  template:
+    metadata:
+      labels:
+        app: burstable-besteffort
+    spec: # these pods will be assigned 'burstable' class because at least one container set a request value.
+      containers:
+      - name: ubuntu-burstable
+        image: ubuntu
+        command: ["sh", "-c"]
+        args:
+          - "sleep 3600"
+        resources: # 'burstable' qos class
+          requests:
+            memory: "100Mi"
+      - name: ubuntu-besteffort
+        image: ubuntu
+        command: ["sh", "-c"]
+        args:
+          - "sleep 3600"
+        resources: {} # 'bestEffort' qos class
