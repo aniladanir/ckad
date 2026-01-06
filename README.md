@@ -83,6 +83,8 @@ There are three QoS classes, from highest to lowest priority:
 2. *Preemption Order:*  If a high-priority Pod cannot be scheduled because there are not enough resources, the scheduler can evict (terminate and remove) lower-priority Pods from a node to make room for the high-priority Pod. The evicted Pods may be rescheduled on other nodes if resources are available.
 3. *Node Pressure Eviction:* When pods are evicted due to node running low on resources, kubelet determines if Pods are using more resources than they requested. Then it groups all candidate Pods by their priority. It will always evict Pods from the lowest priority group first. If multiple Pods exist at the same lowest priority level, the kubelet then uses their QoS class to decide the order of eviction.
 
+**Taints and Tolerations??????????**
+
 ## Kubectl Commands
 ```
 - To quickly run a pod:
