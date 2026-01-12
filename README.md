@@ -83,7 +83,12 @@ There are three QoS classes, from highest to lowest priority:
 2. *Preemption Order:*  If a high-priority Pod cannot be scheduled because there are not enough resources, the scheduler can evict (terminate and remove) lower-priority Pods from a node to make room for the high-priority Pod. The evicted Pods may be rescheduled on other nodes if resources are available.
 3. *Node Pressure Eviction:* When pods are evicted due to node running low on resources, kubelet determines if Pods are using more resources than they requested. Then it groups all candidate Pods by their priority. It will always evict Pods from the lowest priority group first. If multiple Pods exist at the same lowest priority level, the kubelet then uses their QoS class to decide the order of eviction.
 
-**Taints and Tolerations??????????**
+**Service Accounts:** Service Account provides an identity for processes that run inside a Pod. Each service account is bound to a Kubernetes namespace.
+
+- When a pod needs to talk to the Kubernetes API, it authenticates itself using the identity of a service account.
+- Kubernetes automatically creates a secret that holds an authentication token for the Service Account. This token is then mounted into the pod's filesystem (at /var/run/secrets kubernetes.io/serviceaccount/token).
+- Every namespace has a default Service Account. If you don't assign a specific Service Account to a pod when you create it, it automatically uses the default one.
+- A Service Account on its own has no permissions. To grant it the ability to do things, you use Kubernetes' Role-Based Access Control (RBAC). You define a Role (for permissions within a namespace) or a ClusterRole (for cluster-wide permissions) and then bind that role to the Service Account with a RoleBinding or ClusterRoleBinding.
 
 ## Kubectl Commands
 ```
