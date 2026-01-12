@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-dep
+spec:
+  serviceAccountName: my-service-account
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-dep
+  template:
+    metadata:
+      labels:
+        app: my-dep
+    spec:
+      containers:
+      - name: ubuntu
+        image: ubuntu
+        command: ["sh", "-c"]
+        args:
+          - "sleep 3600"
+        resources: {}
