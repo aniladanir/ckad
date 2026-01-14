@@ -90,6 +90,31 @@ There are three QoS classes, from highest to lowest priority:
 - Every namespace has a default Service Account. If you don't assign a specific Service Account to a pod when you create it, it automatically uses the default one.
 - A Service Account on its own has no permissions. To grant it the ability to do things, you use Kubernetes' Role-Based Access Control (RBAC). You define a Role (for permissions within a namespace) or a ClusterRole (for cluster-wide permissions) and then bind that role to the Service Account with a RoleBinding or ClusterRoleBinding.
 
+
+**Security Context:** Security Context is a feature that allows you to define privilege and access control settings for a Pod or an individual Container.
+
+1. User Control
+    - *runAsUser:* Specifies the User ID (UID) that the container process will run as.
+    - *runAsGroup:* Specifies the Group ID (GID) that the container process will run as.
+    - *runAsNonRoot:*  A simple boolean (true/false). If set to true, the Kubelet will validate that the container does not
+     run as UID 0 (root) before starting it.
+2. Privilege Escalation Controls
+    - *allowPrivilegeEscalation:* Controls whether a process can gain more privileges than its parent. Setting this to
+    false prevents a child process from using mechanisms like setuid to elevate its permissions.
+    - *privileged:* A boolean (true/false). Running a container in privileged mode gives it access to all devices on the
+    host and disables nearly all security mechanisms. This is extremely dangerous and should be avoided unless
+    absolutely necessary.
+3. Linux Capabilities</br>
+    Instead of giving a container all-or-nothing root access, Linux capabilities allow you to grant specific kernel-level
+    privileges. This is a much more granular and secure approach.
+    - *capabilities*
+        - *drop: ["ALL"]*: A common practice to drop all default capabilities.
+        - *add: ["NET_BIND_SERVICE"]*: Then, you can add back only the specific ones you need, like allowing a process to bind to a port below 1024 without running as root.
+4. Filesystem Controls
+    - *readOnlyRootFilesystem*: A boolean (true/false). If true, the container's root filesystem is mounted as read-only.
+    This is an excellent security measure to prevent attackers from modifying application binaries or configuration
+    files.
+
 ## Kubectl Commands
 ```
 - To quickly run a pod:
@@ -257,3 +282,49 @@ When building a manifest file, use envFrom if configs are static, and mount file
 
 - **Memory and CPU units:**</br>-For memory units, Mi stands for Mebibyte. This is a binary unit, where 1Mi = 1024 KiB = 1024 * 1024 bytes. (Megabyte is 1000 * 1000 bytes).There is also Gibibyte(Gi) and Kibibyte(Ki).</br>
 -For cpu unit, m stands for millicores.  1000m is equivalent to 1 CPU core. So, 250m means 0.25 (one-quarter) of a CPU core, and 500m means 0.5 (half) of a CPU core.
+
+
+### Security
+
+- **Assigning user/group IDs**
+    - 0 : Is the root user/group id.
+    - 1-999 : This range is reserved for system services and background processes (daemons).
+    - 1000+ : This is the standard range for regular, human login accounts. When you install a Linux desktop, the first user you create is almost always assigned UID 1000 and GID 1000.
+
+- **SetUID Bit**</br>
+The setuid bit (short for "Set User ID") is a special type of permission bit that can be set on executable files in
+Unix-like operating systems (like Linux).  
+*Normally, when a user executes a program, the resulting process runs with the effective user ID (EUID) of the user who
+executed the program.</br> 
+*However, when an executable file has the setuid bit enabled, and a user executes that file:
+<ins>The resulting process will run with the effective user ID (EUID) of the file's owner, instead of the user who
+executed it.</ins>
+- **Privilege Escalation Real World Example (Linux Security):**</br>
+
+    ```
+    The passwd command in Linux
+
+    First, let's understand why this mechanism exists for legitimate reasons. Think about how you change your password on
+    a Linux system.
+
+    1. The Problem: Your user information, including your encrypted password, is stored in the /etc/shadow file. For
+        security, this file is highly protected and can only be read and written to by the `root` user.
+    2. The Question: So, how can you, a normal user (let's say your user is developer), change your own password if you
+        don't have permission to write to /etc/shadow?
+    3. The Solution (`setuid`): The passwd command (located at /usr/bin/passwd) is the solution. This program file is
+        owned by root, and it has a special setuid permission bit set on it.
+
+    When you, the developer user, run the passwd command:
+    * The passwd program starts as a child process of your shell.
+    * Because the setuid bit is active on the file, the kernel does something special: it runs this new process not as
+        you (developer), but as the owner of the file, which is root.
+    * Now this passwd process, running as root, has the necessary privileges to modify the /etc/shadow file.
+    * The program is carefully written to only change the password for the original user (developer) and then exit.
+
+    This is a classic case of privilege escalation: your shell process, running as developer, spawned a child process that
+    is running as root.
+
+- **If an image runs as root and *runAsNonRoot* is set to 'true', pod creation will fail due to conflict. To prevent this, user id must be specified using *runAsUser* security context field (e.g. 'runAsUser: 1001').**
+
+-  **If readOnlyRootFilesystem is set to true, then no one has write access to the container's root filesystem, not even
+the runAsUser and not even the root user (UID 0).**
