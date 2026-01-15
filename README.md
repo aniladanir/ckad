@@ -33,7 +33,40 @@ Configmaps are stored in cluster's etcd.
 
 **NodePort:** Exposes the Service on each Node's IP at a static port (the NodePort). To make the node port available, Kubernetes sets up a cluster IP address, the same as if you had requested a Service of type: ClusterIP.
 
-**Network Policies:** NetworkPolicies are Kubernetes resources that control how Pods are allowed to communicate with each other and with other network endpoints.
+**Ingress:**  an API object that manages external access to the services within a cluster, typically for HTTP and HTTPS traffic.</br>
+Other ways to expose a service are Nodeport and LoadBalancer. But they act as a one-to-one mapping between a public IP and a service.</br>
+Ingress acts as a single entry point that can route traffic to many different services based on the incoming request's hostname or URL path.
+
+```
+Real-World Ingress Example: An E-commerce Website
+
+Imagine you have an e-commerce website running as microservices in Kubernetes:
+* A frontend-service that serves the main user interface.
+* An api-service that handles product data and business logic.
+* An auth-service that manages user login and authentication.
+
+You want to expose these services to the public at the domain my-cool-shop.com.
+
+Without Ingress, you might have to expose each service with its own LoadBalancer, leading to multiple public IPs and higher costs:
+* 203.0.113.10 -> frontend-service
+* 203.0.113.11 -> api-service
+* 203.0.113.12 -> auth-service
+
+With Ingress, you can use a single public IP and route traffic intelligently.
+
+Here's how you'd do it with path-based routing:
+
+* http://my-cool-shop.com -> frontend-service (serves the website)
+* http://my-cool-shop.com/api/ -> api-service (handles API requests)
+* http://my-cool-shop.com/auth/ -> auth-service (handles logins)
+
+You can also handle host-based routing:
+
+* http://my-cool-shop.com -> frontend-service
+* http://api.my-cool-shop.com -> api-service
+```
+
+**Network Policies:** NetworkPolicies are Kubernetes resources that control how Pods are allowed to communicate with each other and with other network endpoints. 
 They use label selectors to define which Pods a policy applies to, and specify allowed ingress (incoming) and egress (outgoing) traffic rules.
 
 **Probes:** Probes are diagnostic checks performed by the kubelet (the agent that runs on each node) to determine the health and readiness of containers running within a Pod. They are crucial for ensuring the reliability and self-healing capabilities of your applications.
