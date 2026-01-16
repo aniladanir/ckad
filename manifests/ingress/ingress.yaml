@@ -1,46 +1,30 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: my-cool-shop-ingress
-  annotations:
-    # This annotation is important; it tells the Ingress controller how to rewrite paths.
-    # For example, a request to /api/products will be sent to the backend service at /products.
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  name: my-shop-ingress
 spec:
-  # 1. TLS Configuration (for HTTPS)
-  # To use this, you first need to create a Secret containing your TLS certificate and key:
-  # kubectl create secret tls my-tls-secret --key /path/to/key.pem --cert /path/to/cert.pem
-  tls:
-  - hosts:
-    - my-cool-shop.com
-    secretName: my-tls-secret # This secret contains the SSL certificate
-
-  # 2. Routing Rules
   rules:
-  - host: my-cool-shop.com
+  - host: api.my-shop.com
     http:
       paths:
-      # Requests to my-cool-shop.com/api/* go to the api-service
-      - path: /api(/|$)(.*)
+      - path: /order
         pathType: Prefix
         backend:
           service:
             name: api-service
             port:
               number: 80
-
-      # Requests to my-cool-shop.com/auth/* go to the auth-service
-      - path: /auth(/|$)(.*)
+      - path: /auth
         pathType: Prefix
         backend:
           service:
             name: auth-service
             port:
               number: 80
-
-      # Requests to my-cool-shop.com/ go to the frontend-service
-      # This should be the last rule to act as a catch-all for the domain.
-      - path: /()(.*)
+  - host: my-shop.com
+    http:
+      paths:
+      - path: /
         pathType: Prefix
         backend:
           service:
