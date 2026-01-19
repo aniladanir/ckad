@@ -1,5 +1,25 @@
 # CKAD EXAM NOTES
 &nbsp;
+## Topics
+### Multi-Container Patterns
+1. **Sidecar:** A sidecar container runs alongside the main application container to provide supporting functionality. Examples include logging, monitoring, and security.</br></br>
+*Problem*: You have a web application container that serves your website. You want to collect logs and metrics from this web server without bloating the web server's code.</br>
+*Solution*: You add a sidecar container to the same pod that reads the log file from the shared volume and forwards the logs to a centralized logging system.
+
+2. **Ambassador:** An ambassador container acts as a proxy for the main container, handling all outgoing network traffic. This can be useful for tasks like service discovery, routing, and circuit breaking, without having to build that logic into the main application.</br></br>
+*Problem:* Your application needs to connect to a sharded database. The application logic for figuring out which shard to connect to for which piece of data is complex.</br>
+*Solution:*  A proxy (like envoy or a custom-built one) that listens on localhost:5432. When the main application connects, the ambassador inspects the request, applies the sharding logic, and forwards the request to the correct database shard out on the network.
+
+3. **Adapter:** An adapter container is used to standardize or normalize the output of the main container. For example, it might
+reformat logs to a specific format required by a centralized logging service.</br></br>
+*Problem:* You have an older, legacy application that you can't modify. It exposes monitoring data in an outdated, non-standard XML format over HTTP. Your company's standard monitoring system, however, only understands the Prometheus metrics format.</br>
+*Solution:* A small web service you write that queries the main container's XML endpoint, converts the data into the Prometheus text-based format, and exposes it on a different port. Your monitoring system can now scrape the adapter.
+
+4. **InitContainer:** An init container runs and completes before the main containers in the pod are started. This is useful for performing setup tasks that the main application relies on.</br></br>
+*Problem:* A container that runs a script. The script makes an API call to a remote configuration server, fetches the data, and writes it to a config.json file on a shared volume. This container runs and exits successfully.
+
+** Note: Ambassador and adapter patterns are more specific implementations of the sidecar pattern.
+
 ## Definitions
 **Pod:** A Pod is the smallest deployable unit in Kubernetes that runs one or more containers sharing network and storage, scheduled onto a single node.
 
@@ -166,7 +186,7 @@ kubectl edit <resource> <name>
 
 
 - To print logs:
-kubectl logs <pod_name>|job/<job_name>
+kubectl logs <pod_name>|job/<job_name> (--previous)
 
 
 - To open a interactive shell inside pod:
@@ -214,6 +234,9 @@ kubectl create configmap <name> --from-file=<file_key>=<file_name>
 
 - To create configmap from literals:
 kubectl create configmap <name> --from-literal=<key1>=<value1> --from-literal=<key2>=<value2> ...
+
+- To quickly create a temporary interactive pod:
+kubectl run temp --image=nginx --image-pull-policy=IfNotPresent --rm -it -- sh
 
 ```
 
@@ -361,3 +384,7 @@ executed it.</ins>
 
 -  **If readOnlyRootFilesystem is set to true, then no one has write access to the container's root filesystem, not even
 the runAsUser and not even the root user (UID 0).**
+
+## DOCS
+
+- Practice questions: https://medium.com/bb-tutorials-and-thoughts/practice-enough-with-these-questions-for-the-ckad-exam-2f42d1228552
