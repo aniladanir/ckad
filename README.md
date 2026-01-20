@@ -23,7 +23,13 @@ reformat logs to a specific format required by a centralized logging service.</b
 ## Definitions
 **Pod:** A Pod is the smallest deployable unit in Kubernetes that runs one or more containers sharing network and storage, scheduled onto a single node.
 
+**ReplicaSet:** A ReplicaSet is a Kubernetes object that ensures a specified number of pod "replicas" are running at any given time. Its main job is to maintain a stable set of pods.</br>
+- No automatic update strategy.
+- No rollback capability
+
 **Deployment:** A deployment manages replicasets to ensure a desired number of identical pods are running and kept in the desired state.
+- Provides automated, rolling updates.
+- Provides easy rollbacks.
 
 **emptyDir:** A volume type that provides ephemeral(temporary) shared storage for containers in the same Pod.
 - Created when pod starts and deleted when pod dies.
@@ -221,6 +227,10 @@ kubectl rollout status deployment <name>
 kubectl rollout undo deployment <name>
 
 
+-View rollout history of a deployment:
+kubectl rollout history deployment <deployment_name>
+
+
 - To create a job:
 kubectl create job <name> --image=<image> -- <command>
 
@@ -237,6 +247,10 @@ kubectl create configmap <name> --from-literal=<key1>=<value1> --from-literal=<k
 
 - To quickly create a temporary interactive pod:
 kubectl run temp --image=nginx --image-pull-policy=IfNotPresent --rm -it -- sh
+
+- To retrive a custom value from a resource
+kubectl get <resource> <resource_name> -o custom-columns=<Column_Name>:<path> 
+Example: kubectl get pods web -o custom-columns=IMAGE:.spec.containers[].image
 
 ```
 
