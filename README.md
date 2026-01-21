@@ -20,6 +20,31 @@ reformat logs to a specific format required by a centralized logging service.</b
 
 ** Note: Ambassador and adapter patterns are more specific implementations of the sidecar pattern.
 
+### Horizontal Pod Autoscaling (HPA)
+Horizontal Pod Autoscaling (HPA) is a core feature of Kubernetes that automatically increases or decreases the number of pod replicas in a Deployment, ReplicaSet, or StatefulSet based on observed metrics like CPU utilization or memory usage.
+
+The primary goals of HPA are to:
+
+1. Maintain Performance and Availability: When traffic to your application increases, HPA automatically adds more pods to handle the load, ensuring your application remains responsive and doesn't crash.
+2. Improve Cost Efficiency: When traffic is low, HPA automatically removes unneeded pods. This frees up cluster resources, which can lead to significant cost savings, especially in cloud environments where you pay for the nodes your pods run on.
+3. Automate Operations: It removes the need for an operator to manually monitor application load and adjust the number of replicas, making the system more self-healing and resilient.
+
+HPA operates on a control loop managed by the Kubernetes controller manager.
+
+1. The Metrics Server: HPA relies on a cluster add-on called the Metrics Server. The Metrics Server collects resource usage data (CPU and memory) from each node's Kubelet and exposes it through the Kubernetes metrics API. Without the Metrics Server, HPA cannot access the data it needs to make scaling decisions based on CPU or
+memory.
+
+2. The Control Loop:
+    * The HPA controller periodically (every 15 seconds by default) queries the metrics API to get the latest metric values for the pods it's targeting.
+    * It compares the current metric value (e.g., the average CPU utilization across all pods) to the target value you defined (e.g., 50%).
+    * It calculates the optimal number of replicas needed to bring the current metric value  up/down closer to the target.
+    * It then updates the replicas field of the target Deployment or ReplicaSet. The Deployment controller then takes over to actually create or terminate pods to match this new desired count.
+
+3. Cooldown/Stabilization Window: To prevent rapid scaling up and down (known as "thrashing"), Kubernetes includes a stabilization window. By default, it waits 3 minutes after the last scale-up event before considering a scale-down, and 5 minutes after the last scale-down event before another scale-down can occur. This
+ensures scaling decisions are based on sustained trends rather than brief spikes.
+
+*** Basically, hpa looks at average cpu utilization by pods, if it is closer to the target we specified, then it does nothing. If the average utilization goes up, then it creates more pods the bring down the average to the desired value. If the average utilization goes down below the target, it evicts some pods to bring the cpu utilization up to the desired value, until it hits min replica value. ***
+
 ## Definitions
 **Pod:** A Pod is the smallest deployable unit in Kubernetes that runs one or more containers sharing network and storage, scheduled onto a single node.
 
@@ -30,6 +55,12 @@ reformat logs to a specific format required by a centralized logging service.</b
 **Deployment:** A deployment manages replicasets to ensure a desired number of identical pods are running and kept in the desired state.
 - Provides automated, rolling updates.
 - Provides easy rollbacks.
+
+**Revision:** A revision represents a snapshot of your Deployment's PodTemplateSpec at a given point in time. Each time you make a change to the PodTemplateSpec of a Deployment (e.g., updating the container image, changing environment variables, modifying resource requests/limits, updating command arguments), Kubernetes considers this a new revision.
+
+- When you create or update a Deployment, the Deployment controller automatically creates a new ReplicaSet that matches the updated PodTemplateSpec.
+- This new ReplicaSet is assigned a unique revision number.
+- Deployments use revisions to gracefully transition to a new version or rollback to an older version if there is any issue.
 
 **emptyDir:** A volume type that provides ephemeral(temporary) shared storage for containers in the same Pod.
 - Created when pod starts and deleted when pod dies.
@@ -227,8 +258,15 @@ kubectl rollout status deployment <name>
 kubectl rollout undo deployment <name>
 
 
--View rollout history of a deployment:
+- To view rollout history of a deployment:
 kubectl rollout history deployment <deployment_name>
+
+- To view what changes are applied on a specific revision:
+kubectl rollout history deployment <deployment_name> --revision <revision_number>
+
+- To pause/resume a rollout: 
+* This does not affect pods that have already entered their termination state *
+kubectl rollout pause/resume deployment <deployment_name>
 
 
 - To create a job:
@@ -252,6 +290,9 @@ kubectl run temp --image=nginx --image-pull-policy=IfNotPresent --rm -it -- sh
 kubectl get <resource> <resource_name> -o custom-columns=<Column_Name>:<path> 
 Example: kubectl get pods web -o custom-columns=IMAGE:.spec.containers[].image
 
+- To create a horizontal autoscaler for a deployment or statefulset imperatively:
+kubectl autoscale deployment <deployment_name> --max/min <number> --cpu/memory
+*Example: kubectl autoscale deployment webapp --min 10 --max 20 --cpu 85% --memory 50%
 ```
 
 ## Notes
