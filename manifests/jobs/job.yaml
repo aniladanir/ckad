@@ -1,0 +1,20 @@
+# simple-job.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pi-calculator
+spec:
+  # --- Job Behavior Configuration ---
+  completions: 3   # This Job will be complete when 3 pods have succeeded.
+  parallelism: 2   # It will run up to 2 of those pods at the same time.
+  backoffLimit: 4  # It will retry failings pod up to 4 times. After that, job is considered as finised and failed.
+  ttlSecondsAfterFinished: 100 # The Job will be cleaned up 100 seconds after it finishes.
+  activeDeadlineSeconds: 300
+  # --- Pod Blueprint ---
+  template:
+    spec:
+      containers:
+      - name: pi
+        image: perl:5.34 # Using a standard perl image
+        command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
+      restartPolicy: OnFailure # Required for Jobs. 'Never' is also valid. Do not use 'Always'.

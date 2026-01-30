@@ -48,6 +48,40 @@ ensures scaling decisions are based on sustained trends rather than brief spikes
 ## Definitions
 **Pod:** A Pod is the smallest deployable unit in Kubernetes that runs one or more containers sharing network and storage, scheduled onto a single node.
 
+**Job:** The primary purpose of a Job is to create one or more pods and ensure that a specified number of them successfully terminate. When the desired number of successful completions is reached, the Job itself is considered complete.
+
+Configuration parameters:
+1. `completions`: Specifies how many pods must complete successfully before the Job is considered finished successfully.
+2. `parallelism`: Specifies the maximum number of pods that can run concurrently at any given time. 
+3. `backoffLimit`: The number of times Kubernetes will retry a pod if it fails (i.e., exits with a non-zero status code). After this many failures, the Job is marked as failed and no more pods are created.
+4. `ttlSecondsAfterFinished`: This tells Kubernetes to automatically delete the Job a certain number of seconds after it has finished (either successfully or failed). Very useful for automatically cleaning up completed jobs. *This timer starts after the job finished, either as failed or success.*
+5. `activeDeadlineSeconds`: A hard time limit for the Job. If the Job is still running after this many seconds, the system will terminate it and all its running pods, marking the Job as failed with a reason of DeadlineExceeded.
+
+**CronJob:** A CronJob in Kubernetes is a resource that creates Jobs on a repeating schedule. It's used for running automated, recurring tasks like database maintenance (running tasks like re-indexing, vacuuming), backups, report generation, or sending emails.
+
+Configuration parameters:
+1. `schedule` (*Required*):  
+```
+# ┌───────────── minute (0 - 59)
+# │ ┌───────────── hour (0 - 23)
+# │ │ ┌───────────── day of the month (1 - 31)
+# │ │ │ ┌───────────── month (1 - 12)
+# │ │ │ │ ┌───────────── day of the week (0 - 6) (Sunday to Saturday)
+# │ │ │ │ │                              
+# │ │ │ │ │
+# │ │ │ │ │
+# * * * * *
+```
+2. `concurrencyPolicy`: Specifies how to handle concurrent executions of a Job
+    - **Allow**:  Allows multiple jobs to run concurrently. Default.
+    - **Forbid**: Prevents a new Job from starting if the previous one hasn't finished yet.
+    - **Replace**: Cancels the currently running Job and starts a new one.
+3. `startingDeadlineSeconds`: The maximum number of seconds a Job can be delayed from its scheduled time if it misses it for any reason. Controller will not create a Job for that specific missed schedule. It will effectively skip that scheduled execution.
+4. `successfulJobsHistoryLimit`: The number of successfully completed Job pods to keep.
+5. `failedJobsHistoryLimit`: The number of failed Job pods to keep.
+6. `jobTemplate`: Has the properties of a job.
+
+
 **ReplicaSet:** A ReplicaSet is a Kubernetes object that ensures a specified number of pod "replicas" are running at any given time. Its main job is to maintain a stable set of pods.</br>
 - No automatic update strategy.
 - No rollback capability

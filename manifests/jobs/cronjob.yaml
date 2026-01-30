@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: hello-date
+spec:
+  schedule: '*/2 * * * *'
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+  concurrenyPolicy: Allow 
+  startingDeadlineSeconds: 300 
+  jobTemplate:
+    metadata:
+      name: hello-date
+    spec:
+      template:
+        metadata: {}
+        spec:
+          containers:
+          - command:
+            - sh
+            - -c
+            - date; echo "hello from kubernetes cluster"
+            image: busybox
+            name: hello-date
+            imagePullPolicy: IfNotPresent
+            resources: {}
+          restartPolicy: OnFailure
+status: {}
