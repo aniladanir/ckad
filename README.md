@@ -90,6 +90,16 @@ Configuration parameters:
 - Provides automated, rolling updates.
 - Provides easy rollbacks.
 
+**DaemonSet:** A DaemonSet is a controller that ensures that a single copy of a specified Pod runs on all (or a specified subset of) nodes in your cluster. Its primary purpose is to deploy background services that need to be present and operational on every node.
+
+Common Use Cases:
+- *Log Collectors*: Running an agent (like Fluentd or Filebeat) on every node to collect logs.
+- *Monitoring Agents*: Deploying a monitoring agent on each node to collect metrics.
+- *Network Proxies/Plugins*: Ensuring networking components are available on all nodes.
+- *Storage Daemons*: Running storage services that need to interact with the underlying node.
+
+**StatefulSet:** 
+
 **Revision:** A revision represents a snapshot of your Deployment's PodTemplateSpec at a given point in time. Each time you make a change to the PodTemplateSpec of a Deployment (e.g., updating the container image, changing environment variables, modifying resource requests/limits, updating command arguments), Kubernetes considers this a new revision.
 
 - When you create or update a Deployment, the Deployment controller automatically creates a new ReplicaSet that matches the updated PodTemplateSpec.
@@ -188,6 +198,38 @@ Timing fields for probes;
 
 - *CPU*: If a container tries to use more CPU than its limit, the Linux kernel throttles the container's processes. The application will run slower, but it won't be terminated.
 - *Memory:* If a container tries to allocate more memory than its limit, Linux kernel triggers an Out-Of-Memory (OOM) kill for the container's processes. Kubelet observes that the container has stopped and reports its status as <ins>OOMKilled</ins> to the Kubernetes control plane.
+
+**Resource Quota:** A ResourceQuota is a Kubernetes object that sets a "budget" for a Namespace. While individual Pods use requests and limits, a ResourceQuota limits the total (aggregate) consumption of all objects within that namespace. Prevents one team or application from "hogging" all the cluster's resources.
+
+There are two types of resource quota:
+
+1. Compute Resource Quota:Limits the sum of CPU and Memory requests/limits for all Pods in the namespace.
+    - `requests.cpu, requests.memory`
+    - `limits.cpu, limits.memory`
+2. Storage Resource Quota:
+    - `requests.storage`: Determines total storage allowed (for PVCs only).
+    - `persistentvolumeclaims`: Determines total number of PVCs allowed.
+3. Object Count Quota: Limits the number of specific objects that can exist in the namespace.
+    - `pods, services, configmaps, secrets, replicationcontrollers.`
+
+*** **Important**: If a Namespace has a ResourceQuota for CPU or Memory, every Pod created in that namespace must have those resource fields defined in its YAML.
+
+**LimitRange:** A LimitRange in Kubernetes is a policy object that enforces constraints on the resource allocations (requests and limits) for individual pods and containers within a namespace.
+
+Its main functions are:
+
+* Setting Min/Max Values: It defines the minimum and maximum CPU and memory requests and limits that individual
+    containers or pods can specify. This prevents containers from being configured with insufficient or excessive
+    resources.
+* Applying Default Values: If a pod or container doesn't explicitly specify resource requests or limits, LimitRange
+    can automatically inject default values.
+* Enforcement: Any pod or container creation that violates the rules defined by the LimitRange will be rejected by
+    the Kubernetes API.
+
+LimitRange can be applied to:
+* `type: Container`: applies to individual containers within a pod 
+* `type: Pod`: applies to the sum of resources across all containers in a Pod.
+* `type: PersistentVolumeClaim`: applies to storage claims.
 
 **Quality of Service (QoS) Classes:** Kubernetes assigns every Pod a QoS class based on the resource requests and limits of its component Containers. QoS classes are used by Kubernetes to decide which Pods to evict from a Node running low on resources like memory and cpu.</br>
 There are three QoS classes, from highest to lowest priority:

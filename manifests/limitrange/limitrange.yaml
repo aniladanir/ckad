@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: cpu-memory-limit-range
+spec:
+  limits:
+  - default: # Default limits for containers if none are specified
+      cpu: 500m
+      memory: 512Mi
+    defaultRequest: # Default requests for containers if none are specified
+      cpu: 200m
+      memory: 256Mi
+    max: # Maximum limits allowed for any container in the namespace
+      cpu: 1
+      memory: 1Gi
+    min: # Minimum requests allowed for any container in the namespace
+      cpu: 100m
+      memory: 128Mi
+    type: Container # This limit range applies to containers
