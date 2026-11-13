@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CKAD Warm-Up Practical Exam</title>
+<style>
+:root {
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-alt: #f1f5f9;
+  --text: #0f172a;
+  --text-muted: #475569;
+  --border: #e2e8f0;
+  --primary: #2563eb;
+  --primary-soft: #dbeafe;
+  --primary-text: #1d4ed8;
+  --code-bg: #0f172a;
+  --code-text: #e2e8f0;
+  --inline-code-bg: #e2e8f0;
+  --inline-code-text: #0f172a;
+  --success: #16a34a;
+  --success-soft: #dcfce7;
+  --danger: #dc2626;
+  --danger-soft: #fee2e2;
+  --warn-bg: #fef3c7;
+  --warn-border: #f59e0b;
+  --shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="dark"] {
+  --bg: #0b1120;
+  --surface: #111827;
+  --surface-alt: #1e293b;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --primary: #60a5fa;
+  --primary-soft: rgba(59, 130, 246, 0.15);
+  --primary-text: #93c5fd;
+  --code-bg: #020617;
+  --code-text: #e2e8f0;
+  --inline-code-bg: #1e293b;
+  --inline-code-text: #f8fafc;
+  --success: #4ade80;
+  --success-soft: rgba(34, 197, 94, 0.15);
+  --danger: #f87171;
+  --danger-soft: rgba(239, 68, 68, 0.15);
+  --warn-bg: rgba(245, 158, 11, 0.14);
+  --warn-border: #f59e0b;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.topbar-brand {
+  font-weight: 700;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.nav-link {
+  text-decoration: none;
+  color: var(--text-muted);
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+.nav-link:hover { background: var(--surface-alt); color: var(--text); }
+.nav-link.active { background: var(--primary-soft); color: var(--primary-text); font-weight: 600; }
+
+.btn {
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--text);
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn:hover { border-color: var(--primary); color: var(--primary); }
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.btn-primary:hover { opacity: 0.92; color: #fff; }
+
+.layout {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: 2rem;
+  padding: 1.75rem 1.5rem 4rem;
+}
+.layout.single-col {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 960px;
+}
+
+.sidebar {
+  position: sticky;
+  top: 4.5rem;
+  max-height: calc(100vh - 5.5rem);
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem;
+  font-size: 0.87rem;
+}
+.sidebar h3 {
+  margin: 0 0 0.65rem;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+.sidebar ul { list-style: none; padding: 0; margin: 0; }
+.sidebar li { margin: 0.2rem 0; }
+.sidebar a {
+  display: block;
+  text-decoration: none;
+  color: var(--text-muted);
+  padding: 0.22rem 0.45rem;
+  border-radius: 5px;
+}
+.sidebar a:hover { background: var(--surface-alt); color: var(--primary); }
+.sidebar .toc-h2 { font-weight: 600; color: var(--text); margin-top: 0.45rem; }
+.sidebar .toc-h3 { padding-left: 1rem; font-size: 0.83rem; }
+
+.content {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem 2.25rem;
+  box-shadow: var(--shadow);
+  min-width: 0;
+}
+
+h1, h2, h3, h4 {
+  color: var(--text);
+  line-height: 1.3;
+  scroll-margin-top: 4.75rem;
+}
+h1 { font-size: 2rem; margin-top: 0; border-bottom: 2px solid var(--border); padding-bottom: 0.6rem; }
+h2 { font-size: 1.45rem; margin-top: 2.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+h3 { font-size: 1.15rem; margin-top: 1.6rem; }
+h4 { font-size: 1rem; margin-top: 1.25rem; color: var(--primary-text); }
+
+a { color: var(--primary); }
+p { margin: 0.7rem 0; }
+ul, ol { padding-left: 1.45rem; margin: 0.6rem 0; }
+li { margin: 0.3rem 0; }
+hr { border: none; border-top: 1px solid var(--border); margin: 1.8rem 0; }
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--inline-code-bg);
+  color: var(--inline-code-text);
+  padding: 0.14rem 0.38rem;
+  border-radius: 4px;
+}
+
+.code-wrap {
+  position: relative;
+  margin: 0.9rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.code-header {
+  background: #1e293b;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  padding: 0.3rem 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: ui-monospace, monospace;
+}
+.copy-btn {
+  background: rgba(255,255,255,0.1);
+  color: #e2e8f0;
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 4px;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.74rem;
+  cursor: pointer;
+}
+.copy-btn:hover { background: rgba(255,255,255,0.2); }
+pre {
+  margin: 0;
+  padding: 0.95rem 1.05rem;
+  background: var(--code-bg);
+  color: var(--code-text);
+  overflow-x: auto;
+  font-size: 0.87rem;
+  line-height: 1.5;
+}
+pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+}
+
+blockquote {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  background: var(--warn-bg);
+  border-left: 4px solid var(--warn-border);
+  border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.25rem 0; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.92rem;
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: var(--surface-alt); font-weight: 600; }
+
+details {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  margin: 0.85rem 0;
+}
+summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--primary-text);
+}
+details[open] summary { margin-bottom: 0.6rem; }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; max-height: none; }
+  .content { padding: 1.25rem; }
+}
+
+.progress-bar-wrap {
+  position: sticky;
+  top: 3.7rem;
+  z-index: 40;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.85rem 1.2rem;
+  margin: 1.2rem 0 1.5rem;
+  box-shadow: var(--shadow);
+}
+.progress-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+.progress-track {
+  width: 100%;
+  height: 10px;
+  background: var(--surface-alt);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--success);
+  transition: width 0.25s ease;
+}
+.task-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.15rem 1.3rem;
+  margin: 1.1rem 0;
+  background: var(--surface);
+}
+.task-card.done { border-color: var(--success); }
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.task-header h3 { margin: 0 0 0.4rem; }
+.task-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+.sol-details { border-left: 4px solid var(--primary); }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-brand">CKAD Study Suite</div>
+  <nav class="topbar-nav">
+    <a class="nav-link " href="CKAD_QUIZ_MCQ.html">MCQ Quiz (25 Qs)</a>
+<a class="nav-link active" href="CKAD_WARMUP_EXAM.html">Warm-Up Lab (12 Tasks)</a>
+    <button id="theme-btn" class="btn" onclick="toggleTheme()">Dark Mode</button>
+  </nav>
+</header>
+
+<div class="layout single-col">
+  <main class="content">
+    <h1 id="ckad-warm-up-practical-exam-apply-ready">CKAD Warm-Up Practical Exam (Apply-Ready)</h1>
+<p>Welcome back to Kubernetes! This <strong>gentle, 12-task warm-up exam</strong> is designed to help you shake off the rust with <code>kubectl</code> imperative commands, YAML generation (<code>--dry-run=client -o yaml</code>), and <code>kubectl apply</code>.</p>
+<ul><li><strong>Difficulty:</strong> Easy / Warm-Up</li><li><strong>Target Time:</strong> ~45–60 minutes</li><li><strong>Prerequisites:</strong> Any Kubernetes cluster (<code>kind</code>, <code>minikube</code>, <code>k3s</code>, Docker Desktop, etc.) and <code>kubectl</code>.</li></ul>
+<hr>
+<h2 id="pre-flight-setup">Pre-Flight Setup</h2>
+<ol><li>Set up the same speed aliases you would use on the real CKAD exam:<div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>alias k=kubectl
+export do=&quot;--dry-run=client -o yaml&quot;</code></pre></div></li><li>Apply the starter environment (creates the <code>ckad-warmup</code> namespace plus two helper Deployments/Services used in later tasks):<div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl apply -f setup.yaml</code></pre></div></li><li>Verify the setup is ready:<div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl get all -n ckad-warmup</code></pre></div></li></ol>
+<blockquote><p><strong>Tip:</strong> Put all your created manifests in <code>warmup-exam/</code> (or <code>/tmp/opencode/</code>) and apply them with <code>kubectl apply -f &lt;file&gt;.yaml</code>. Don't peek at the <a href="#solutions">Solutions</a> until you try each task!</p></blockquote>
+<hr>
+    <div class="progress-bar-wrap">
+      <div class="progress-top">
+        <span id="prog-label">Progress: 0 / 12 tasks completed</span>
+        <button class="btn" onclick="resetLab()">Reset Checklist</button>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+    </div>
+    <h2>Tasks</h2>
+    
+<div class="task-card" id="task-1">
+  <div class="task-header">
+    <h3>Task 1: Imperative Pod Generation &amp; YAML Export (Weight: 5%)</h3>
+    <label class="task-check">
+      <input type="checkbox" class="lab-cb" data-task="1">
+      <span>Completed</span>
+    </label>
+  </div>
+  <div class="task-body"><p>In namespace <code>ckad-warmup</code>:</p>
+<ul><li>Create a Pod named <code>web-pod</code> using image <code>nginx:1.25-alpine</code>.</li><li>Expose container port <code>80</code>.</li><li>Add the label <code>env=warmup</code>.</li><li><strong>Warm-up goal:</strong> Generate the YAML first using <code>$do</code> into <code>task1-pod.yaml</code>, inspect it, and apply it with <code>kubectl apply</code>.</li></ul>
+<details>
+<summary>Hint</summary>
+<p>Use <code>kubectl run web-pod -n ckad-warmup --image=nginx:1.25-alpine --port=80 --labels=&quot;env=warmup&quot; $do &gt; task1-pod.yaml</code>.</p>
+</details></div>
+  <details class="sol-details">
+    <summary>Solution &amp; Verify (Task 1)</summary>
+    <div><div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl run web-pod -n ckad-warmup --image=nginx:1.25-alpine --port=80 --labels=&quot;env=warmup&quot; --dry-run=client -o yaml &gt; task1-pod.yaml
+kubectl apply -f task1-pod.yaml</code></pre></div>
+<p><strong>Verify:</strong> <code>kubectl get pod web-pod -n ckad-warmup --show-labels</code></p></div>
+  </details>
+</div>
+<div class="task-card" id="task-2">
+  <div class="task-header">
+    <h3>Task 2: Pod with Command, Args &amp; Resource Requests/Limits (Weight: 8%)</h3>
+    <label class="task-check">
+      <input type="checkbox" class="lab-cb" data-task="2">
+      <span>Completed</span>
+    </label>
+  </div>
+  <div class="task-body"><p>In namespace <code>ckad-warmup</code>, create a Pod named <code>sleeper</code>:</p>
+<ul><li>Image: <code>busybox:1.36</code></li><li>Command: <code>[&quot;sh&quot;, &quot;-c&quot;, &quot;echo Warming up &amp;&amp; sleep 3600&quot;]</code></li><li>Resource <strong>requests</strong>: <code>cpu: 50m</code>, <code>memory: 64Mi</code></li><li>Resource <strong>limits</strong>: <code>cpu: 100m</code>, <code>memory: 128Mi</code></li><li>Check what <strong>QoS Class</strong> Kubernetes assigned to <code>sleeper</code>.</li></ul>
+<details>
+<summary>Hint</summary>
+<p>Start from <code>k run sleeper -n ckad-warmup --image=busybox:1.36 $do -- sh -c &quot;echo Warming up &amp;&amp; sleep 3600&quot; &gt; task2-sleeper.yaml</code> and edit <code>resources</code>. Check QoS with <code>kubectl get pod sleeper -n ckad-warmup -o jsonpath=&#x27;{.status.qosClass}&#x27;</code>.</p>
+</details></div>
+  <details class="sol-details">
+    <summary>Solution &amp; Verify (Task 2)</summary>
+    <div><p><code>task2-sleeper.yaml</code>:</p>
+<div class="code-wrap"><div class="code-header"><span>yaml</span><button class="copy-btn">Copy</button></div><pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: sleeper
+  namespace: ckad-warmup
+spec:
+  containers:
+  - name: sleeper
+    image: busybox:1.36
+    command: [&quot;sh&quot;, &quot;-c&quot;, &quot;echo Warming up &amp;&amp; sleep 3600&quot;]
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi</code></pre></div>
+<div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl apply -f task2-sleeper.yaml</code></pre></div>
+<p><strong>Verify:</strong> <code>kubectl get pod sleeper -n ckad-warmup -o jsonpath=&#x27;{.status.qosClass}{&quot;\n&quot;}&#x27;</code> -&gt; <code>Burstable</code></p></div>
+  </details>
+</div>
+<div class="task-card" id="task-3">
+  <div class="task-header">
+    <h3>Task 3: ConfigMap — Env Var &amp; Volume Mount (Weight: 10%)</h3>
+    <label class="task-check">
+      <input type="checkbox" class="lab-cb" data-task="3">
+      <span>Completed</span>
+    </label>
+  </div>
+  <div class="task-body"><p>In namespace <code>ckad-warmup</code>:</p>
+<ol><li>Create a ConfigMap named <code>app-settings</code> with two literal keys:<ul><li><code>APP_ENV=staging</code></li><li><code>LOG_LEVEL=debug</code></li></ul></li><li>Create a Pod named <code>config-pod</code> using image <code>busybox:1.36</code> running <code>sleep 3600</code>:<ul><li>Load <code>APP_ENV</code> as an environment variable inside the container.</li><li>Mount the entire <code>app-settings</code> ConfigMap as a volume at <code>/etc/config</code>.</li></ul></li></ol>
+<details>
+<summary>Hint</summary>
+<p>Create the ConfigMap imperatively with <code>kubectl create configmap app-settings -n ckad-warmup --from-literal=APP_ENV=staging --from-literal=LOG_LEVEL=debug</code>, then add <code>env</code> (<code>valueFrom.configMapKeyRef</code>) and <code>volumes</code>/<code>volumeMounts</code> to the Pod YAML.</p>
+</details></div>
+  <details class="sol-details">
+    <summary>Solution &amp; Verify (Task 3)</summary>
+    <div><div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl create configmap app-settings -n ckad-warmup --from-literal=APP_ENV=staging --from-literal=LOG_LEVEL=debug</code></pre></div>
+<p><code>task3-config-pod.yaml</code>:</p>
+<div class="code-wrap"><div class="code-header"><span>yaml</span><button class="copy-btn">Copy</button></div><pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: config-pod
+  namespace: ckad-warmup
+spec:
+  containers:
+  - name: config-pod
+    image: busybox:1.36
+    command: [&quot;sleep&quot;, &quot;3600&quot;]
+    env:
+    - name: APP_ENV
+      valueFrom:
+        configMapKeyRef:
+          name: app-settings
+          key: APP_ENV
+    volumeMounts:
+    - name: config-vol
+      mountPath: /etc/config
+  volumes:
+  - name: config-vol
+    configMap:
+      name: app-settings</code></pre></div>
+<div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl apply -f task3-config-pod.yaml</code></pre></div>
+<p><strong>Verify:</strong></p>
+<div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl exec config-pod -n ckad-warmup -- printenv APP_ENV
+kubectl exec config-pod -n ckad-warmup -- ls /etc/config</code></pre></div></div>
+  </details>
+</div>
+<div class="task-card" id="task-4">
+  <div class="task-header">
+    <h3>Task 4: Secret Creation &amp; Consumption (Weight: 8%)</h3>
+    <label class="task-check">
+      <input type="checkbox" class="lab-cb" data-task="4">
+      <span>Completed</span>
+    </label>
+  </div>
+  <div class="task-body"><p>In namespace <code>ckad-warmup</code>:</p>
+<ol><li>Create a generic Secret named <code>db-creds</code> with:<ul><li><code>DB_USER=admin</code></li><li><code>DB_PASS=warmup123</code></li></ul></li><li>Create a Pod named <code>db-client</code> using <code>busybox:1.36</code> running <code>sleep 3600</code> that imports <strong>all</strong> keys from <code>db-creds</code> as environment variables (<code>envFrom</code>).</li></ol>
+<details>
+<summary>Hint</summary>
+<p>Use <code>kubectl create secret generic db-creds -n ckad-warmup --from-literal=DB_USER=admin --from-literal=DB_PASS=warmup123</code>, and use <code>spec.containers[0].envFrom[].secretRef.name: db-creds</code>.</p>
+</details></div>
+  <details class="sol-details">
+    <summary>Solution &amp; Verify (Task 4)</summary>
+    <div><div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl create secret generic db-creds -n ckad-warmup --from-literal=DB_USER=admin --from-literal=DB_PASS=warmup123</code></pre></div>
+<p><code>task4-db-client.yaml</code>:</p>
+<div class="code-wrap"><div class="code-header"><span>yaml</span><button class="copy-btn">Copy</button></div><pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: db-client
+  namespace: ckad-warmup
+spec:
+  containers:
+  - name: db-client
+    image: busybox:1.36
+    command: [&quot;sleep&quot;, &quot;3600&quot;]
+    envFrom:
+    - secretRef:
+        name: db-creds</code></pre></div>
+<div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl apply -f task4-db-client.yaml</code></pre></div>
+<p><strong>Verify:</strong> <code>kubectl exec db-client -n ckad-warmup -- env | grep DB_</code></p></div>
+  </details>
+</div>
+<div class="task-card" id="task-5">
+  <div class="task-header">
+    <h3>Task 5: Multi-Container Pod (Sidecar + <code>emptyDir</code>) (Weight: 10%)</h3>
+    <label class="task-check">
+      <input type="checkbox" class="lab-cb" data-task="5">
+      <span>Completed</span>
+    </label>
+  </div>
+  <div class="task-body"><p>In namespace <code>ckad-warmup</code>, create a Pod named <code>logger-pod</code> with two containers sharing an <code>emptyDir</code> volume named <code>log-vol</code>:</p>
+<ol><li>Container <code>writer</code> (<code>busybox:1.36</code>): mounts <code>log-vol</code> at <code>/var/log</code> and runs: <code>sh -c &quot;while true; do date &gt;&gt; /var/log/app.log; sleep 5; done&quot;</code></li><li>Container <code>sidecar</code> (<code>busybox:1.36</code>): mounts <code>log-vol</code> at <code>/var/log</code> and runs: <code>sh -c &quot;tail -n+1 -f /var/log/app.log&quot;</code></li></ol>
+<details>
+<summary>Hint</summary>
+<p>Generate a single-container Pod YAML with <code>$do</code>, duplicate the container block for <code>sidecar</code>, add <code>emptyDir: {}</code> under <code>volumes</code>, and mount it in both containers. Test with <code>kubectl logs logger-pod -n ckad-warmup -c sidecar</code>.</p>
+</details></div>
+  <details class="sol-details">
+    <summary>Solution &amp; Verify (Task 5)</summary>
+    <div><p><code>task5-logger-pod.yaml</code>:</p>
+<div class="code-wrap"><div class="code-header"><span>yaml</span><button class="copy-btn">Copy</button></div><pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: logger-pod
+  namespace: ckad-warmup
+spec:
+  containers:
+  - name: writer
+    image: busybox:1.36
+    command: [&quot;sh&quot;, &quot;-c&quot;, &quot;while true; do date &gt;&gt; /var/log/app.log; sleep 5; done&quot;]
+    volumeMounts:
+    - name: log-vol
+      mountPath: /var/log
+  - name: sidecar
+    image: busybox:1.36
+    command: [&quot;sh&quot;, &quot;-c&quot;, &quot;tail -n+1 -f /var/log/app.log&quot;]
+    volumeMounts:
+    - name: log-vol
+      mountPath: /var/log
+  volumes:
+  - name: log-vol
+    emptyDir: {}</code></pre></div>
+<div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl apply -f task5-logger-pod.yaml</code></pre></div>
+<p><strong>Verify:</strong> <code>kubectl logs logger-pod -n ckad-warmup -c sidecar</code></p></div>
+  </details>
+</div>
+<div class="task-card" id="task-6">
+  <div class="task-header">
+    <h3>Task 6: Deployment, Scaling, Rolling Update &amp; Rollback (Weight: 10%)</h3>
+    <label class="task-check">
+      <input type="checkbox" class="lab-cb" data-task="6">
+      <span>Completed</span>
+    </label>
+  </div>
+  <div class="task-body"><p>In namespace <code>ckad-warmup</code>:</p>
+<ol><li>Create a Deployment named <code>api-deploy</code> with image <code>nginx:1.25-alpine</code> and <code>2</code> replicas.</li><li>Scale <code>api-deploy</code> to <code>3</code> replicas.</li><li>Update the container image to <code>nginx:1.26-alpine</code> and wait for the rollout to finish.</li><li>Check the rollout history, then roll back <code>api-deploy</code> to the previous revision (<code>nginx:1.25-alpine</code>).</li></ol>
+<details>
+<summary>Hint</summary>
+<p>Use <code>kubectl create deployment</code>, <code>kubectl scale</code>, <code>kubectl set image</code>, <code>kubectl rollout status</code>, <code>kubectl rollout history</code>, and <code>kubectl rollout undo</code>.</p>
+</details></div>
+  <details class="sol-details">
+    <summary>Solution &amp; Verify (Task 6)</summary>
+    <div><div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl create deployment api-deploy -n ckad-warmup --image=nginx:1.25-alpine --replicas=2
+kubectl scale deployment api-deploy -n ckad-warmup --replicas=3
+kubectl set image deployment/api-deploy -n ckad-warmup nginx=nginx:1.26-alpine
+kubectl rollout status deployment/api-deploy -n ckad-warmup
+kubectl rollout history deployment/api-deploy -n ckad-warmup
+kubectl rollout undo deployment/api-deploy -n ckad-warmup</code></pre></div>
+<p><strong>Verify:</strong> <code>kubectl get deploy api-deploy -n ckad-warmup -o jsonpath=&#x27;{.spec.template.spec.containers[0].image}{&quot;\n&quot;}&#x27;</code> -&gt; <code>nginx:1.25-alpine</code></p></div>
+  </details>
+</div>
+<div class="task-card" id="task-7">
+  <div class="task-header">
+    <h3>Task 7: Readiness &amp; Liveness Probes (Weight: 8%)</h3>
+    <label class="task-check">
+      <input type="checkbox" class="lab-cb" data-task="7">
+      <span>Completed</span>
+    </label>
+  </div>
+  <div class="task-body"><p>In namespace <code>ckad-warmup</code>, create a Pod named <code>probe-web</code> (<code>nginx:1.25-alpine</code>, port <code>80</code>) with:</p>
+<ul><li>A <code>readinessProbe</code> doing an HTTP GET on <code>/</code> port <code>80</code> (<code>initialDelaySeconds: 2</code>, <code>periodSeconds: 5</code>).</li><li>A <code>livenessProbe</code> doing an HTTP GET on <code>/</code> port <code>80</code> (<code>initialDelaySeconds: 5</code>, <code>periodSeconds: 10</code>).</li></ul>
+<details>
+<summary>Hint</summary>
+<p>Generate <code>probe-web</code> YAML with <code>$do</code>, then add <code>readinessProbe</code> and <code>livenessProbe</code> with <code>httpGet: { path: /, port: 80 }</code>.</p>
+</details></div>
+  <details class="sol-details">
+    <summary>Solution &amp; Verify (Task 7)</summary>
+    <div><p><code>task7-probe-web.yaml</code>:</p>
+<div class="code-wrap"><div class="code-header"><span>yaml</span><button class="copy-btn">Copy</button></div><pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: probe-web
+  namespace: ckad-warmup
+spec:
+  containers:
+  - name: probe-web
+    image: nginx:1.25-alpine
+    ports:
+    - containerPort: 80
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 80
+      initialDelaySeconds: 2
+      periodSeconds: 5
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 80
+      initialDelaySeconds: 5
+      periodSeconds: 10</code></pre></div>
+<div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl apply -f task7-probe-web.yaml</code></pre></div>
+<p><strong>Verify:</strong> <code>kubectl describe pod probe-web -n ckad-warmup | grep -E &quot;Liveness|Readiness&quot;</code></p></div>
+  </details>
+</div>
+<div class="task-card" id="task-8">
+  <div class="task-header">
+    <h3>Task 8: Job &amp; CronJob (Weight: 8%)</h3>
+    <label class="task-check">
+      <input type="checkbox" class="lab-cb" data-task="8">
+      <span>Completed</span>
+    </label>
+  </div>
+  <div class="task-body"><p>In namespace <code>ckad-warmup</code>:</p>
+<ol><li>Create a Job named <code>batch-job</code> using <code>busybox:1.36</code> that runs <code>echo &quot;Job complete&quot;</code> with <code>completions: 2</code> and <code>parallelism: 2</code>.</li><li>Create a CronJob named <code>heartbeat</code> using <code>busybox:1.36</code> that runs <code>date</code> every 5 minutes (<code>*/5 * * * *</code>).</li></ol>
+<details>
+<summary>Hint</summary>
+<p>Use <code>kubectl create job batch-job -n ckad-warmup --image=busybox:1.36 $do -- echo &quot;Job complete&quot;</code> and add <code>completions: 2</code> / <code>parallelism: 2</code> under <code>spec</code>. Use <code>kubectl create cronjob heartbeat -n ckad-warmup --image=busybox:1.36 --schedule=&quot;*/5 * * * *&quot; -- date</code>.</p>
+</details></div>
+  <details class="sol-details">
+    <summary>Solution &amp; Verify (Task 8)</summary>
+    <div><p><code>task8-batch-job.yaml</code>:</p>
+<div class="code-wrap"><div class="code-header"><span>yaml</span><button class="copy-btn">Copy</button></div><pre><code>apiVersion: batch/v1
+kind: Job
+metadata:
+  name: batch-job
+  namespace: ckad-warmup
+spec:
+  completions: 2
+  parallelism: 2
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: batch-job
+        image: busybox:1.36
+        command: [&quot;echo&quot;, &quot;Job complete&quot;]</code></pre></div>
+<div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl apply -f task8-batch-job.yaml
+kubectl create cronjob heartbeat -n ckad-warmup --image=busybox:1.36 --schedule=&quot;*/5 * * * *&quot; -- date</code></pre></div>
+<p><strong>Verify:</strong> <code>kubectl get job,cronjob -n ckad-warmup</code></p></div>
+  </details>
+</div>
+<div class="task-card" id="task-9">
+  <div class="task-header">
+    <h3>Task 9: Troubleshoot &amp; Fix a Broken Service (Weight: 8%)</h3>
+    <label class="task-check">
+      <input type="checkbox" class="lab-cb" data-task="9">
+      <span>Completed</span>
+    </label>
+  </div>
+  <div class="task-body"><p>In namespace <code>ckad-warmup</code>, <code>setup.yaml</code> already created a Deployment <code>broken-app</code> and a Service <code>broken-svc</code>.</p>
+<ol><li>Check why <code>broken-svc</code> has no endpoints (<code>kubectl get endpoints broken-svc -n ckad-warmup</code>).</li><li>Fix <code>broken-svc</code> so it properly routes traffic to the <code>broken-app</code> Pods.</li></ol>
+<details>
+<summary>Hint</summary>
+<p>Compare <code>kubectl get pods -n ckad-warmup --show-labels</code> against <code>kubectl describe svc broken-svc -n ckad-warmup</code>. Edit the Service selector (<code>app: broken-apps</code> -&gt; <code>app: broken-app</code>).</p>
+</details></div>
+  <details class="sol-details">
+    <summary>Solution &amp; Verify (Task 9)</summary>
+    <div><p>The Service <code>broken-svc</code> has <code>selector.app: broken-apps</code>, while the Pods have <code>app: broken-app</code>.</p>
+<div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl patch svc broken-svc -n ckad-warmup -p &#x27;{&quot;spec&quot;:{&quot;selector&quot;:{&quot;app&quot;:&quot;broken-app&quot;}}}&#x27;
+# (Or run: kubectl edit svc broken-svc -n ckad-warmup)</code></pre></div>
+<p><strong>Verify:</strong> <code>kubectl get endpoints broken-svc -n ckad-warmup</code> (should now list 2 Pod IP endpoints!)</p></div>
+  </details>
+</div>
+<div class="task-card" id="task-10">
+  <div class="task-header">
+    <h3>Task 10: SecurityContext (Non-Root &amp; Read-Only Root Filesystem) (Weight: 8%)</h3>
+    <label class="task-check">
+      <input type="checkbox" class="lab-cb" data-task="10">
+      <span>Completed</span>
+    </label>
+  </div>
+  <div class="task-body"><p>In namespace <code>ckad-warmup</code>, create a Pod named <code>secure-pod</code> using image <code>busybox:1.36</code> running <code>sleep 3600</code> with:</p>
+<ul><li>Pod-level <code>securityContext</code>: <code>runAsUser: 1000</code>, <code>runAsNonRoot: true</code></li><li>Container-level <code>securityContext</code>: <code>allowPrivilegeEscalation: false</code>, <code>readOnlyRootFilesystem: true</code></li></ul>
+<details>
+<summary>Hint</summary>
+<p>Check the field names with <code>kubectl explain pod.spec.securityContext</code> and <code>kubectl explain pod.spec.containers.securityContext</code>.</p>
+</details></div>
+  <details class="sol-details">
+    <summary>Solution &amp; Verify (Task 10)</summary>
+    <div><p><code>task10-secure-pod.yaml</code>:</p>
+<div class="code-wrap"><div class="code-header"><span>yaml</span><button class="copy-btn">Copy</button></div><pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: secure-pod
+  namespace: ckad-warmup
+spec:
+  securityContext:
+    runAsUser: 1000
+    runAsNonRoot: true
+  containers:
+  - name: secure-pod
+    image: busybox:1.36
+    command: [&quot;sleep&quot;, &quot;3600&quot;]
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true</code></pre></div>
+<div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl apply -f task10-secure-pod.yaml</code></pre></div>
+<p><strong>Verify:</strong></p>
+<div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl exec secure-pod -n ckad-warmup -- id          # uid=1000
+kubectl exec secure-pod -n ckad-warmup -- touch /test # Read-only file system error</code></pre></div></div>
+  </details>
+</div>
+<div class="task-card" id="task-11">
+  <div class="task-header">
+    <h3>Task 11: ServiceAccount &amp; RBAC (Weight: 9%)</h3>
+    <label class="task-check">
+      <input type="checkbox" class="lab-cb" data-task="11">
+      <span>Completed</span>
+    </label>
+  </div>
+  <div class="task-body"><p>In namespace <code>ckad-warmup</code>:</p>
+<ol><li>Create a ServiceAccount named <code>pod-viewer</code>.</li><li>Create a Role named <code>read-pods</code> granting <code>get</code>, <code>list</code>, <code>watch</code> on <code>pods</code>.</li><li>Create a RoleBinding named <code>bind-read-pods</code> binding <code>read-pods</code> to <code>pod-viewer</code>.</li><li>Verify that <code>pod-viewer</code> can list Pods in <code>ckad-warmup</code>, and cannot delete Pods.</li></ol>
+<details>
+<summary>Hint</summary>
+<p>All 3 objects can be created with <code>kubectl create serviceaccount</code>, <code>kubectl create role</code>, and <code>kubectl create rolebinding</code>. Verify with <code>kubectl auth can-i list pods -n ckad-warmup --as=system:serviceaccount:ckad-warmup:pod-viewer</code>.</p>
+</details></div>
+  <details class="sol-details">
+    <summary>Solution &amp; Verify (Task 11)</summary>
+    <div><div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl create serviceaccount pod-viewer -n ckad-warmup
+kubectl create role read-pods -n ckad-warmup --verb=get,list,watch --resource=pods
+kubectl create rolebinding bind-read-pods -n ckad-warmup --role=read-pods --serviceaccount=ckad-warmup:pod-viewer</code></pre></div>
+<p><strong>Verify:</strong></p>
+<div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl auth can-i list pods -n ckad-warmup --as=system:serviceaccount:ckad-warmup:pod-viewer    # yes
+kubectl auth can-i delete pods -n ckad-warmup --as=system:serviceaccount:ckad-warmup:pod-viewer  # no</code></pre></div></div>
+  </details>
+</div>
+<div class="task-card" id="task-12">
+  <div class="task-header">
+    <h3>Task 12: Basic NetworkPolicy (Weight: 8%)</h3>
+    <label class="task-check">
+      <input type="checkbox" class="lab-cb" data-task="12">
+      <span>Completed</span>
+    </label>
+  </div>
+  <div class="task-body"><p>In namespace <code>ckad-warmup</code>, <code>setup.yaml</code> deployed an <code>api-server</code> Pod with label <code>app: api</code>. Create a NetworkPolicy named <code>allow-web-to-api</code> that:</p>
+<ul><li>Selects Pods with label <code>app: api</code>.</li><li>Allows <strong>Ingress</strong> on TCP port <code>80</code> <strong>only</strong> from Pods in the same namespace with label <code>app: web</code>.</li></ul>
+<p><em>(Note: Some minimal local clusters like Docker Desktop/kind without Calico/Cilium accept the NetworkPolicy object even if they don't enforce it—still great practice writing and applying the YAML!)</em></p>
+<details>
+<summary>Hint</summary>
+<p>Set <code>spec.podSelector.matchLabels.app: api</code>, <code>policyTypes: [&quot;Ingress&quot;]</code>, and an <code>ingress</code> rule with <code>from: [{ podSelector: { matchLabels: { app: web } } }]</code> and <code>ports: [{ protocol: TCP, port: 80 }]</code>.</p>
+</details></div>
+  <details class="sol-details">
+    <summary>Solution &amp; Verify (Task 12)</summary>
+    <div><p><code>task12-netpol.yaml</code>:</p>
+<div class="code-wrap"><div class="code-header"><span>yaml</span><button class="copy-btn">Copy</button></div><pre><code>apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-web-to-api
+  namespace: ckad-warmup
+spec:
+  podSelector:
+    matchLabels:
+      app: api
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: web
+    ports:
+    - protocol: TCP
+      port: 80</code></pre></div>
+<div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl apply -f task12-netpol.yaml</code></pre></div>
+<p><strong>Verify:</strong> <code>kubectl describe networkpolicy allow-web-to-api -n ckad-warmup</code></p></div>
+  </details>
+</div>
+    <h2 id="verification-quick-check-script">Verification Quick-Check Script</h2>
+<p>Run these commands after finishing to check your resources:</p>
+<div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl get pods,deploy,svc,cm,secret,job,cronjob,sa,role,rolebinding,netpol -n ckad-warmup</code></pre></div>
+<hr>
+    <h2 id="cleanup">Cleanup</h2>
+<p>When you're done practicing, remove everything created during the warm-up exam with one command:</p>
+<div class="code-wrap"><div class="code-header"><span>bash</span><button class="copy-btn">Copy</button></div><pre><code>kubectl delete namespace ckad-warmup</code></pre></div>
+  </main>
+</div>
+<script>
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('ckad-theme', next); } catch (e) {}
+  updateThemeBtn();
+}
+function updateThemeBtn() {
+  const btn = document.getElementById('theme-btn');
+  if (!btn) return;
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  btn.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+}
+(function() {
+  try {
+    const saved = localStorage.getItem('ckad-theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+  } catch (e) {}
+  updateThemeBtn();
+})();
+
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('copy-btn')) {
+    const code = e.target.closest('.code-wrap').querySelector('pre code').innerText;
+    navigator.clipboard.writeText(code).then(() => {
+      const orig = e.target.textContent;
+      e.target.textContent = 'Copied!';
+      setTimeout(() => e.target.textContent = orig, 1400);
+    });
+  }
+});
+
+function updateProgress() {
+  const cbs = document.querySelectorAll('.lab-cb');
+  const done = Array.from(cbs).filter(c => c.checked).length;
+  const total = cbs.length;
+  document.getElementById('prog-label').textContent = `Progress: ${done} / ${total} tasks completed`;
+  document.getElementById('prog-fill').style.width = `${Math.round((done / total) * 100)}%`;
+  const state = {};
+  cbs.forEach(c => {
+    state[c.dataset.task] = c.checked;
+    document.getElementById(`task-${c.dataset.task}`).classList.toggle('done', c.checked);
+  });
+  try { localStorage.setItem('ckad-warmup-progress', JSON.stringify(state)); } catch (e) {}
+}
+
+function resetLab() {
+  document.querySelectorAll('.lab-cb').forEach(c => c.checked = false);
+  updateProgress();
+}
+
+(function() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('ckad-warmup-progress') || '{}');
+    document.querySelectorAll('.lab-cb').forEach(c => {
+      if (saved[c.dataset.task]) c.checked = true;
+      c.addEventListener('change', updateProgress);
+    });
+  } catch (e) {}
+  updateProgress();
+})();
+</script>
+</body>
+</html>

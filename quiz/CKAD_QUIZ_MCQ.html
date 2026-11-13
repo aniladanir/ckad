@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CKAD Multiple-Choice Practice Exam</title>
+<style>
+:root {
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-alt: #f1f5f9;
+  --text: #0f172a;
+  --text-muted: #475569;
+  --border: #e2e8f0;
+  --primary: #2563eb;
+  --primary-soft: #dbeafe;
+  --primary-text: #1d4ed8;
+  --code-bg: #0f172a;
+  --code-text: #e2e8f0;
+  --inline-code-bg: #e2e8f0;
+  --inline-code-text: #0f172a;
+  --success: #16a34a;
+  --success-soft: #dcfce7;
+  --danger: #dc2626;
+  --danger-soft: #fee2e2;
+  --warn-bg: #fef3c7;
+  --warn-border: #f59e0b;
+  --shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="dark"] {
+  --bg: #0b1120;
+  --surface: #111827;
+  --surface-alt: #1e293b;
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --primary: #60a5fa;
+  --primary-soft: rgba(59, 130, 246, 0.15);
+  --primary-text: #93c5fd;
+  --code-bg: #020617;
+  --code-text: #e2e8f0;
+  --inline-code-bg: #1e293b;
+  --inline-code-text: #f8fafc;
+  --success: #4ade80;
+  --success-soft: rgba(34, 197, 94, 0.15);
+  --danger: #f87171;
+  --danger-soft: rgba(239, 68, 68, 0.15);
+  --warn-bg: rgba(245, 158, 11, 0.14);
+  --warn-border: #f59e0b;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.topbar-brand {
+  font-weight: 700;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.nav-link {
+  text-decoration: none;
+  color: var(--text-muted);
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+.nav-link:hover { background: var(--surface-alt); color: var(--text); }
+.nav-link.active { background: var(--primary-soft); color: var(--primary-text); font-weight: 600; }
+
+.btn {
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--text);
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn:hover { border-color: var(--primary); color: var(--primary); }
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}
+.btn-primary:hover { opacity: 0.92; color: #fff; }
+
+.layout {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: 2rem;
+  padding: 1.75rem 1.5rem 4rem;
+}
+.layout.single-col {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 960px;
+}
+
+.sidebar {
+  position: sticky;
+  top: 4.5rem;
+  max-height: calc(100vh - 5.5rem);
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem;
+  font-size: 0.87rem;
+}
+.sidebar h3 {
+  margin: 0 0 0.65rem;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+.sidebar ul { list-style: none; padding: 0; margin: 0; }
+.sidebar li { margin: 0.2rem 0; }
+.sidebar a {
+  display: block;
+  text-decoration: none;
+  color: var(--text-muted);
+  padding: 0.22rem 0.45rem;
+  border-radius: 5px;
+}
+.sidebar a:hover { background: var(--surface-alt); color: var(--primary); }
+.sidebar .toc-h2 { font-weight: 600; color: var(--text); margin-top: 0.45rem; }
+.sidebar .toc-h3 { padding-left: 1rem; font-size: 0.83rem; }
+
+.content {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 2rem 2.25rem;
+  box-shadow: var(--shadow);
+  min-width: 0;
+}
+
+h1, h2, h3, h4 {
+  color: var(--text);
+  line-height: 1.3;
+  scroll-margin-top: 4.75rem;
+}
+h1 { font-size: 2rem; margin-top: 0; border-bottom: 2px solid var(--border); padding-bottom: 0.6rem; }
+h2 { font-size: 1.45rem; margin-top: 2.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.4rem; }
+h3 { font-size: 1.15rem; margin-top: 1.6rem; }
+h4 { font-size: 1rem; margin-top: 1.25rem; color: var(--primary-text); }
+
+a { color: var(--primary); }
+p { margin: 0.7rem 0; }
+ul, ol { padding-left: 1.45rem; margin: 0.6rem 0; }
+li { margin: 0.3rem 0; }
+hr { border: none; border-top: 1px solid var(--border); margin: 1.8rem 0; }
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.88em;
+  background: var(--inline-code-bg);
+  color: var(--inline-code-text);
+  padding: 0.14rem 0.38rem;
+  border-radius: 4px;
+}
+
+.code-wrap {
+  position: relative;
+  margin: 0.9rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.code-header {
+  background: #1e293b;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  padding: 0.3rem 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: ui-monospace, monospace;
+}
+.copy-btn {
+  background: rgba(255,255,255,0.1);
+  color: #e2e8f0;
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 4px;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.74rem;
+  cursor: pointer;
+}
+.copy-btn:hover { background: rgba(255,255,255,0.2); }
+pre {
+  margin: 0;
+  padding: 0.95rem 1.05rem;
+  background: var(--code-bg);
+  color: var(--code-text);
+  overflow-x: auto;
+  font-size: 0.87rem;
+  line-height: 1.5;
+}
+pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+}
+
+blockquote {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  background: var(--warn-bg);
+  border-left: 4px solid var(--warn-border);
+  border-radius: 0 8px 8px 0;
+}
+blockquote p { margin: 0.25rem 0; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.92rem;
+}
+th, td {
+  border: 1px solid var(--border);
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: var(--surface-alt); font-weight: 600; }
+
+details {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  margin: 0.85rem 0;
+}
+summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--primary-text);
+}
+details[open] summary { margin-bottom: 0.6rem; }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; max-height: none; }
+  .content { padding: 1.25rem; }
+}
+
+.score-bar {
+  position: sticky;
+  top: 3.7rem;
+  z-index: 40;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.85rem 1.2rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  box-shadow: var(--shadow);
+}
+.q-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.15rem 1.25rem;
+  margin: 1rem 0;
+  background: var(--surface);
+}
+.q-card.correct { border-color: var(--success); background: var(--success-soft); }
+.q-card.wrong { border-color: var(--danger); background: var(--danger-soft); }
+.q-badge {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--primary-soft);
+  color: var(--primary-text);
+  padding: 0.2rem 0.55rem;
+  border-radius: 5px;
+  margin-bottom: 0.45rem;
+}
+.q-opts { display: flex; flex-direction: column; gap: 0.45rem; margin-top: 0.75rem; }
+.opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.opt:hover { border-color: var(--primary); }
+.opt input { margin-top: 0.25rem; }
+.opt.is-correct { border-color: var(--success); font-weight: 600; }
+.opt.is-wrong { border-color: var(--danger); }
+.q-feedback {
+  margin-top: 0.85rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 7px;
+  background: var(--surface);
+  border-left: 4px solid var(--primary);
+  font-size: 0.92rem;
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-brand">CKAD Study Suite</div>
+  <nav class="topbar-nav">
+    <a class="nav-link active" href="CKAD_QUIZ_MCQ.html">MCQ Quiz (25 Qs)</a>
+<a class="nav-link " href="CKAD_WARMUP_EXAM.html">Warm-Up Lab (12 Tasks)</a>
+    <button id="theme-btn" class="btn" onclick="toggleTheme()">Dark Mode</button>
+  </nav>
+</header>
+
+<div class="layout single-col">
+  <main class="content">
+    <h1>CKAD Multiple-Choice Practice Exam</h1>
+    <p>25 questions covering all 5 official CKAD exam domains. Click options to answer, then check your score and read explanations.</p>
+    <div class="score-bar">
+      <div id="score-text">Select your answers and click Check All Answers.</div>
+      <div style="display:flex; gap:0.5rem;">
+        <button class="btn btn-primary" onclick="gradeQuiz()">Check All Answers</button>
+        <button class="btn" onclick="resetQuiz()">Reset</button>
+      </div>
+    </div>
+    <section class="domain-sec"><h2>Domain 1: Application Design and Build (Questions 1–5)</h2>
+<div class="q-card" id="q-1" data-q="1" data-ans="C">
+  <div class="q-header"><span class="q-badge">Question 1</span></div>
+  <div class="q-prompt"><p>A Dockerfile has <code>ENTRYPOINT [&quot;python3&quot;, &quot;app.py&quot;]</code> and <code>CMD [&quot;--port&quot;, &quot;8080&quot;]</code>. In a Kubernetes Pod manifest, you define:</p>
+<div class="code-wrap"><div class="code-header"><span>yaml</span><button class="copy-btn">Copy</button></div><pre><code>args: [&quot;--port&quot;, &quot;9090&quot;]</code></pre></div>
+<p>What command is executed when the container starts?</p></div>
+  <div class="q-opts"><label class="opt" data-q="1" data-opt="A">
+                  <input type="radio" name="q1" value="A">
+                  <span><strong>A)</strong> <code>[&quot;--port&quot;, &quot;9090&quot;]</code></span>
+                </label>
+<label class="opt" data-q="1" data-opt="B">
+                  <input type="radio" name="q1" value="B">
+                  <span><strong>B)</strong> <code>python3 app.py --port 8080 --port 9090</code></span>
+                </label>
+<label class="opt" data-q="1" data-opt="C">
+                  <input type="radio" name="q1" value="C">
+                  <span><strong>C)</strong> <code>python3 app.py --port 9090</code></span>
+                </label>
+<label class="opt" data-q="1" data-opt="D">
+                  <input type="radio" name="q1" value="D">
+                  <span><strong>D)</strong> <code>python3 app.py</code></span>
+                </label></div>
+  <div class="q-feedback" id="fb-1" style="display:none;">
+    <strong>Answer: C</strong> — In Kubernetes, <code>args</code> overrides <code>CMD</code> in the Dockerfile while preserving <code>ENTRYPOINT</code>. (<code>command</code> overrides <code>ENTRYPOINT</code>.)
+  </div>
+</div>
+
+<div class="q-card" id="q-2" data-q="2" data-ans="C">
+  <div class="q-header"><span class="q-badge">Question 2</span></div>
+  <div class="q-prompt"><p>You need a container to fetch configuration from an external API and write it to a shared volume <em>before</em> the main application container starts, and then exit. Which pattern should you use?</p></div>
+  <div class="q-opts"><label class="opt" data-q="2" data-opt="A">
+                  <input type="radio" name="q2" value="A">
+                  <span><strong>A)</strong> Ambassador container</span>
+                </label>
+<label class="opt" data-q="2" data-opt="B">
+                  <input type="radio" name="q2" value="B">
+                  <span><strong>B)</strong> Adapter container</span>
+                </label>
+<label class="opt" data-q="2" data-opt="C">
+                  <input type="radio" name="q2" value="C">
+                  <span><strong>C)</strong> Init container</span>
+                </label>
+<label class="opt" data-q="2" data-opt="D">
+                  <input type="radio" name="q2" value="D">
+                  <span><strong>D)</strong> Standard sidecar container</span>
+                </label></div>
+  <div class="q-feedback" id="fb-2" style="display:none;">
+    <strong>Answer: C</strong> — Init containers run sequentially to completion before main containers start.
+  </div>
+</div>
+
+<div class="q-card" id="q-3" data-q="3" data-ans="B">
+  <div class="q-header"><span class="q-badge">Question 3</span></div>
+  <div class="q-prompt"><p>Which statement is true about a <code>Job</code> configured with <code>completions: 4</code>, <code>parallelism: 2</code>, and <code>backoffLimit: 3</code>?</p></div>
+  <div class="q-opts"><label class="opt" data-q="3" data-opt="A">
+                  <input type="radio" name="q3" value="A">
+                  <span><strong>A)</strong> Four Pods run simultaneously until at least two succeed.</span>
+                </label>
+<label class="opt" data-q="3" data-opt="B">
+                  <input type="radio" name="q3" value="B">
+                  <span><strong>B)</strong> At most two Pods run at a time until four Pods exit with status <code>0</code>; the Job fails if more than 3 Pod failures occur.</span>
+                </label>
+<label class="opt" data-q="3" data-opt="C">
+                  <input type="radio" name="q3" value="C">
+                  <span><strong>C)</strong> The Job runs four times on a cron schedule, two at a time.</span>
+                </label>
+<label class="opt" data-q="3" data-opt="D">
+                  <input type="radio" name="q3" value="D">
+                  <span><strong>D)</strong> Each Pod is allowed up to 3 restarts inside the same Pod object without creating new Pods.</span>
+                </label></div>
+  <div class="q-feedback" id="fb-3" style="display:none;">
+    <strong>Answer: B</strong> — <code>completions</code> = total successful Pods required (<code>4</code>), <code>parallelism</code> = max concurrent Pods (<code>2</code>), <code>backoffLimit</code> = max failed Pod retries (<code>3</code>).
+  </div>
+</div>
+
+<div class="q-card" id="q-4" data-q="4" data-ans="B">
+  <div class="q-header"><span class="q-badge">Question 4</span></div>
+  <div class="q-prompt"><p>A Deployment with <code>replicas: 3</code> uses a single PersistentVolumeClaim with access mode <code>ReadWriteOnce</code> (<code>RWO</code>) across a 3-node cluster. What happens?</p></div>
+  <div class="q-opts"><label class="opt" data-q="4" data-opt="A">
+                  <input type="radio" name="q4" value="A">
+                  <span><strong>A)</strong> All 3 Pods mount the volume on all 3 nodes without issue.</span>
+                </label>
+<label class="opt" data-q="4" data-opt="B">
+                  <input type="radio" name="q4" value="B">
+                  <span><strong>B)</strong> Only Pods scheduled on the <strong>same node</strong> where the PV is attached can mount the PVC; Pods scheduled on other nodes will fail to attach the volume.</span>
+                </label>
+<label class="opt" data-q="4" data-opt="C">
+                  <input type="radio" name="q4" value="C">
+                  <span><strong>C)</strong> Kubernetes automatically converts the PVC to <code>ReadWriteMany</code>.</span>
+                </label>
+<label class="opt" data-q="4" data-opt="D">
+                  <input type="radio" name="q4" value="D">
+                  <span><strong>D)</strong> Each Pod automatically gets its own separate PersistentVolume.</span>
+                </label></div>
+  <div class="q-feedback" id="fb-4" style="display:none;">
+    <strong>Answer: B</strong> — <code>ReadWriteOnce</code> binds the volume to a single Node. Multiple Pods on that <em>same</em> Node can mount it, but Pods on other Nodes cannot.
+  </div>
+</div>
+
+<div class="q-card" id="q-5" data-q="5" data-ans="A">
+  <div class="q-header"><span class="q-badge">Question 5</span></div>
+  <div class="q-prompt"><p>What is a key difference between <code>ReadWriteOnce</code> (<code>RWO</code>) and <code>ReadWriteOncePod</code> (<code>RWOP</code>)?</p></div>
+  <div class="q-opts"><label class="opt" data-q="5" data-opt="A">
+                  <input type="radio" name="q5" value="A">
+                  <span><strong>A)</strong> <code>RWO</code> allows one Node to mount read-write (multiple Pods on that Node can access it); <code>RWOP</code> restricts read-write access to a single Pod across the entire cluster.</span>
+                </label>
+<label class="opt" data-q="5" data-opt="B">
+                  <input type="radio" name="q5" value="B">
+                  <span><strong>B)</strong> <code>RWO</code> is for SSDs and <code>RWOP</code> is for NFS shares.</span>
+                </label>
+<label class="opt" data-q="5" data-opt="C">
+                  <input type="radio" name="q5" value="C">
+                  <span><strong>C)</strong> <code>RWOP</code> allows multiple Nodes to mount the volume read-only.</span>
+                </label>
+<label class="opt" data-q="5" data-opt="D">
+                  <input type="radio" name="q5" value="D">
+                  <span><strong>D)</strong> <code>RWO</code> deletes data when the Pod restarts; <code>RWOP</code> retains it.</span>
+                </label></div>
+  <div class="q-feedback" id="fb-5" style="display:none;">
+    <strong>Answer: A</strong> — <code>RWO</code> restricts read-write mounting to one Node; <code>RWOP</code> (Kubernetes 1.29+ GA) restricts read-write mounting to a single Pod.
+  </div>
+</div></section><section class="domain-sec"><h2>Domain 2: Application Deployment (Questions 6–10)</h2>
+<div class="q-card" id="q-6" data-q="6" data-ans="B">
+  <div class="q-header"><span class="q-badge">Question 6</span></div>
+  <div class="q-prompt"><p>During a <code>RollingUpdate</code> on a Deployment with <code>replicas: 4</code>, <code>maxSurge: 25%</code>, and <code>maxUnavailable: 25%</code>, what is the maximum number of Pods that can exist at once during the update?</p></div>
+  <div class="q-opts"><label class="opt" data-q="6" data-opt="A">
+                  <input type="radio" name="q6" value="A">
+                  <span><strong>A)</strong> 4</span>
+                </label>
+<label class="opt" data-q="6" data-opt="B">
+                  <input type="radio" name="q6" value="B">
+                  <span><strong>B)</strong> 5</span>
+                </label>
+<label class="opt" data-q="6" data-opt="C">
+                  <input type="radio" name="q6" value="C">
+                  <span><strong>C)</strong> 6</span>
+                </label>
+<label class="opt" data-q="6" data-opt="D">
+                  <input type="radio" name="q6" value="D">
+                  <span><strong>D)</strong> 8</span>
+                </label></div>
+  <div class="q-feedback" id="fb-6" style="display:none;">
+    <strong>Answer: B</strong> — <code>4</code> desired + <code>25% of 4</code> (<code>1</code> surge) = <strong>5</strong> Pods max during the rolling update.
+  </div>
+</div>
+
+<div class="q-card" id="q-7" data-q="7" data-ans="B">
+  <div class="q-header"><span class="q-badge">Question 7</span></div>
+  <div class="q-prompt"><p>You want to perform a <strong>Blue-Green deployment</strong> using standard Kubernetes objects so traffic switches instantaneously from <code>v1</code> to <code>v2</code>. How do you switch traffic?</p></div>
+  <div class="q-opts"><label class="opt" data-q="7" data-opt="A">
+                  <input type="radio" name="q7" value="A">
+                  <span><strong>A)</strong> Set <code>strategy.type: Recreate</code> on the Deployment.</span>
+                </label>
+<label class="opt" data-q="7" data-opt="B">
+                  <input type="radio" name="q7" value="B">
+                  <span><strong>B)</strong> Update the <code>Service</code>'s <code>spec.selector</code> label (e.g., from <code>version: blue</code> to <code>version: green</code>).</span>
+                </label>
+<label class="opt" data-q="7" data-opt="C">
+                  <input type="radio" name="q7" value="C">
+                  <span><strong>C)</strong> Scale <code>v1</code> down to 0 and wait 5 minutes for <code>v2</code> to warm up.</span>
+                </label>
+<label class="opt" data-q="7" data-opt="D">
+                  <input type="radio" name="q7" value="D">
+                  <span><strong>D)</strong> Edit the <code>HorizontalPodAutoscaler</code> <code>minReplicas</code>.</span>
+                </label></div>
+  <div class="q-feedback" id="fb-7" style="display:none;">
+    <strong>Answer: B</strong> — Blue-Green runs both versions simultaneously behind separate labels; switching the Service's selector instantly routes traffic to the new version.
+  </div>
+</div>
+
+<div class="q-card" id="q-8" data-q="8" data-ans="D">
+  <div class="q-header"><span class="q-badge">Question 8</span></div>
+  <div class="q-prompt"><p>Which statement about <code>HorizontalPodAutoscaler</code> (HPA) is <strong>false</strong>?</p></div>
+  <div class="q-opts"><label class="opt" data-q="8" data-opt="A">
+                  <input type="radio" name="q8" value="A">
+                  <span><strong>A)</strong> HPA requires the Metrics Server to scale based on CPU or memory utilization.</span>
+                </label>
+<label class="opt" data-q="8" data-opt="B">
+                  <input type="radio" name="q8" value="B">
+                  <span><strong>B)</strong> Target Pods must have resource <code>requests</code> defined to scale on CPU percentage utilization.</span>
+                </label>
+<label class="opt" data-q="8" data-opt="C">
+                  <input type="radio" name="q8" value="C">
+                  <span><strong>C)</strong> By default, HPA waits 5 minutes (<code>300s</code> stabilization window) before scaling down to prevent thrashing.</span>
+                </label>
+<label class="opt" data-q="8" data-opt="D">
+                  <input type="radio" name="q8" value="D">
+                  <span><strong>D)</strong> HPA scales Pods by modifying the <code>limits.cpu</code> field of running containers.</span>
+                </label></div>
+  <div class="q-feedback" id="fb-8" style="display:none;">
+    <strong>Answer: D</strong> — HPA scales the number of <strong>replicas</strong>, not container CPU/memory limits (that would be VPA — Vertical Pod Autoscaler).
+  </div>
+</div>
+
+<div class="q-card" id="q-9" data-q="9" data-ans="A">
+  <div class="q-header"><span class="q-badge">Question 9</span></div>
+  <div class="q-prompt"><p>You want to deploy a Helm chart named <code>bitnami/nginx</code> as release <code>web</code> in namespace <code>frontend</code> (creating the namespace if it doesn't exist) while overriding <code>replicaCount</code> to <code>3</code>. Which command works?</p></div>
+  <div class="q-opts"><label class="opt" data-q="9" data-opt="A">
+                  <input type="radio" name="q9" value="A">
+                  <span><strong>A)</strong> <code>helm install web bitnami/nginx -n frontend --create-namespace --set replicaCount=3</code></span>
+                </label>
+<label class="opt" data-q="9" data-opt="B">
+                  <input type="radio" name="q9" value="B">
+                  <span><strong>B)</strong> <code>helm apply web bitnami/nginx --namespace=frontend --replicas=3</code></span>
+                </label>
+<label class="opt" data-q="9" data-opt="C">
+                  <input type="radio" name="q9" value="C">
+                  <span><strong>C)</strong> <code>helm create web bitnami/nginx -n frontend --values replicaCount=3</code></span>
+                </label>
+<label class="opt" data-q="9" data-opt="D">
+                  <input type="radio" name="q9" value="D">
+                  <span><strong>D)</strong> <code>helm run bitnami/nginx --name=web -n frontend --set replicaCount=3</code></span>
+                </label></div>
+  <div class="q-feedback" id="fb-9" style="display:none;">
+    <strong>Answer: A</strong> — <code>helm install &lt;release&gt; &lt;chart&gt; -n &lt;ns&gt; --create-namespace --set key=val</code> is the standard Helm v3 syntax.
+  </div>
+</div>
+
+<div class="q-card" id="q-10" data-q="10" data-ans="B">
+  <div class="q-header"><span class="q-badge">Question 10</span></div>
+  <div class="q-prompt"><p>A Pod has a <code>nodeAffinity</code> rule of type <code>preferredDuringSchedulingIgnoredDuringExecution</code>, and <strong>no</strong> nodes in the cluster match the label expression. What happens to the Pod?</p></div>
+  <div class="q-opts"><label class="opt" data-q="10" data-opt="A">
+                  <input type="radio" name="q10" value="A">
+                  <span><strong>A)</strong> The Pod remains in <code>Pending</code> state indefinitely.</span>
+                </label>
+<label class="opt" data-q="10" data-opt="B">
+                  <input type="radio" name="q10" value="B">
+                  <span><strong>B)</strong> The Pod is still scheduled onto an available node (ignoring the preference).</span>
+                </label>
+<label class="opt" data-q="10" data-opt="C">
+                  <input type="radio" name="q10" value="C">
+                  <span><strong>C)</strong> The Pod fails with <code>CreateContainerConfigError</code>.</span>
+                </label>
+<label class="opt" data-q="10" data-opt="D">
+                  <input type="radio" name="q10" value="D">
+                  <span><strong>D)</strong> Kubernetes automatically adds the label to a node.</span>
+                </label></div>
+  <div class="q-feedback" id="fb-10" style="display:none;">
+    <strong>Answer: B</strong> — <code>preferredDuringSchedulingIgnoredDuringExecution</code> is a soft preference; if no Node matches, the scheduler places the Pod elsewhere.
+  </div>
+</div></section><section class="domain-sec"><h2>Domain 3: Application Observability and Maintenance (Questions 11–14)</h2>
+<div class="q-card" id="q-11" data-q="11" data-ans="C">
+  <div class="q-header"><span class="q-badge">Question 11</span></div>
+  <div class="q-prompt"><p>A legacy application takes 60 seconds to initialize before its HTTP endpoint responds, after which it responds every second. Which probe configuration best prevents Kubernetes from killing the container during startup while still catching deadlocks quickly once running?</p></div>
+  <div class="q-opts"><label class="opt" data-q="11" data-opt="A">
+                  <input type="radio" name="q11" value="A">
+                  <span><strong>A)</strong> <code>livenessProbe</code> with <code>periodSeconds: 1</code> and <code>failureThreshold: 3</code></span>
+                </label>
+<label class="opt" data-q="11" data-opt="B">
+                  <input type="radio" name="q11" value="B">
+                  <span><strong>B)</strong> <code>readinessProbe</code> with <code>initialDelaySeconds: 60</code></span>
+                </label>
+<label class="opt" data-q="11" data-opt="C">
+                  <input type="radio" name="q11" value="C">
+                  <span><strong>C)</strong> <code>startupProbe</code> covering the boot window (e.g., <code>periodSeconds: 10, failureThreshold: 12</code>), paired with a fast <code>livenessProbe</code></span>
+                </label>
+<label class="opt" data-q="11" data-opt="D">
+                  <input type="radio" name="q11" value="D">
+                  <span><strong>D)</strong> <code>exec</code> probe that always returns <code>exit 0</code></span>
+                </label></div>
+  <div class="q-feedback" id="fb-11" style="display:none;">
+    <strong>Answer: C</strong> — <code>startupProbe</code> disables liveness/readiness probes during the slow boot window without compromising fast deadlock detection afterward.
+  </div>
+</div>
+
+<div class="q-card" id="q-12" data-q="12" data-ans="B">
+  <div class="q-header"><span class="q-badge">Question 12</span></div>
+  <div class="q-prompt"><p>A container's <code>readinessProbe</code> starts failing, while its <code>livenessProbe</code> continues to succeed. What does Kubernetes do?</p></div>
+  <div class="q-opts"><label class="opt" data-q="12" data-opt="A">
+                  <input type="radio" name="q12" value="A">
+                  <span><strong>A)</strong> Restarts the container immediately.</span>
+                </label>
+<label class="opt" data-q="12" data-opt="B">
+                  <input type="radio" name="q12" value="B">
+                  <span><strong>B)</strong> Removes the Pod's IP from matching Service <code>Endpoints</code> without restarting the container.</span>
+                </label>
+<label class="opt" data-q="12" data-opt="C">
+                  <input type="radio" name="q12" value="C">
+                  <span><strong>C)</strong> Evicts the Pod from the Node.</span>
+                </label>
+<label class="opt" data-q="12" data-opt="D">
+                  <input type="radio" name="q12" value="D">
+                  <span><strong>D)</strong> Marks the Deployment as <code>Failed</code>.</span>
+                </label></div>
+  <div class="q-feedback" id="fb-12" style="display:none;">
+    <strong>Answer: B</strong> — A failing <code>readinessProbe</code> removes the Pod from Service <code>Endpoints</code> so it receives no traffic; only <code>livenessProbe</code> restarts the container.
+  </div>
+</div>
+
+<div class="q-card" id="q-13" data-q="13" data-ans="B">
+  <div class="q-header"><span class="q-badge">Question 13</span></div>
+  <div class="q-prompt"><p>A Pod is in <code>CrashLoopBackOff</code>, and you want to inspect the logs from the container <strong>before</strong> its most recent restart. Which command should you run?</p></div>
+  <div class="q-opts"><label class="opt" data-q="13" data-opt="A">
+                  <input type="radio" name="q13" value="A">
+                  <span><strong>A)</strong> <code>kubectl describe pod &lt;pod-name&gt;</code></span>
+                </label>
+<label class="opt" data-q="13" data-opt="B">
+                  <input type="radio" name="q13" value="B">
+                  <span><strong>B)</strong> <code>kubectl logs &lt;pod-name&gt; --previous</code></span>
+                </label>
+<label class="opt" data-q="13" data-opt="C">
+                  <input type="radio" name="q13" value="C">
+                  <span><strong>C)</strong> <code>kubectl logs &lt;pod-name&gt; --all-containers</code></span>
+                </label>
+<label class="opt" data-q="13" data-opt="D">
+                  <input type="radio" name="q13" value="D">
+                  <span><strong>D)</strong> <code>kubectl exec -it &lt;pod-name&gt; -- dmesg</code></span>
+                </label></div>
+  <div class="q-feedback" id="fb-13" style="display:none;">
+    <strong>Answer: B</strong> — <code>kubectl logs &lt;pod&gt; --previous</code> (or <code>-p</code>) retrieves stdout/stderr from the previous terminated container instance.
+  </div>
+</div>
+
+<div class="q-card" id="q-14" data-q="14" data-ans="B">
+  <div class="q-header"><span class="q-badge">Question 14</span></div>
+  <div class="q-prompt"><p>You are upgrading an older cluster manifest that uses <code>apiVersion: extensions/v1beta1</code> for an <code>Ingress</code>. What is the correct current stable <code>apiVersion</code> for <code>Ingress</code>?</p></div>
+  <div class="q-opts"><label class="opt" data-q="14" data-opt="A">
+                  <input type="radio" name="q14" value="A">
+                  <span><strong>A)</strong> <code>apps/v1</code></span>
+                </label>
+<label class="opt" data-q="14" data-opt="B">
+                  <input type="radio" name="q14" value="B">
+                  <span><strong>B)</strong> <code>networking.k8s.io/v1</code></span>
+                </label>
+<label class="opt" data-q="14" data-opt="C">
+                  <input type="radio" name="q14" value="C">
+                  <span><strong>C)</strong> <code>core/v1</code> (<code>v1</code>)</span>
+                </label>
+<label class="opt" data-q="14" data-opt="D">
+                  <input type="radio" name="q14" value="D">
+                  <span><strong>D)</strong> <code>gateway.networking.k8s.io/v1alpha1</code></span>
+                </label></div>
+  <div class="q-feedback" id="fb-14" style="display:none;">
+    <strong>Answer: B</strong> — <code>Ingress</code> moved to stable <code>networking.k8s.io/v1</code> in Kubernetes 1.19 (and <code>extensions/v1beta1</code> was removed in 1.22).
+  </div>
+</div></section><section class="domain-sec"><h2>Domain 4: Application Environment, Configuration and Security (Questions 15–20)</h2>
+<div class="q-card" id="q-15" data-q="15" data-ans="B">
+  <div class="q-header"><span class="q-badge">Question 15</span></div>
+  <div class="q-prompt"><p>You mount a ConfigMap into a Pod using <code>volumeMounts[].subPath: app.conf</code>, and later update the ConfigMap key <code>app.conf</code>. What happens inside the running container?</p></div>
+  <div class="q-opts"><label class="opt" data-q="15" data-opt="A">
+                  <input type="radio" name="q15" value="A">
+                  <span><strong>A)</strong> The file updates automatically within ~1 minute.</span>
+                </label>
+<label class="opt" data-q="15" data-opt="B">
+                  <input type="radio" name="q15" value="B">
+                  <span><strong>B)</strong> The file does <strong>not</strong> update automatically when <code>subPath</code> is used; the Pod must be recreated to see the change.</span>
+                </label>
+<label class="opt" data-q="15" data-opt="C">
+                  <input type="radio" name="q15" value="C">
+                  <span><strong>C)</strong> Kubernetes automatically restarts the Pod.</span>
+                </label>
+<label class="opt" data-q="15" data-opt="D">
+                  <input type="radio" name="q15" value="D">
+                  <span><strong>D)</strong> The container is <code>OOMKilled</code>.</span>
+                </label></div>
+  <div class="q-feedback" id="fb-15" style="display:none;">
+    <strong>Answer: B</strong> — Mounting a ConfigMap or Secret with <code>subPath</code> prevents kubelet from updating the file when the ConfigMap/Secret changes.
+  </div>
+</div>
+
+<div class="q-card" id="q-16" data-q="16" data-ans="B">
+  <div class="q-header"><span class="q-badge">Question 16</span></div>
+  <div class="q-prompt"><p>What happens when a container attempts to consume more <strong>CPU</strong> than its <code>limits.cpu</code> vs. more <strong>memory</strong> than its <code>limits.memory</code>?</p></div>
+  <div class="q-opts"><label class="opt" data-q="16" data-opt="A">
+                  <input type="radio" name="q16" value="A">
+                  <span><strong>A)</strong> Both CPU and memory overuse cause the container to be <code>OOMKilled</code>.</span>
+                </label>
+<label class="opt" data-q="16" data-opt="B">
+                  <input type="radio" name="q16" value="B">
+                  <span><strong>B)</strong> CPU overuse causes throttling (container slows down); memory overuse causes <code>OOMKilled</code> (container terminated).</span>
+                </label>
+<label class="opt" data-q="16" data-opt="C">
+                  <input type="radio" name="q16" value="C">
+                  <span><strong>C)</strong> Memory overuse causes throttling; CPU overuse causes <code>OOMKilled</code>.</span>
+                </label>
+<label class="opt" data-q="16" data-opt="D">
+                  <input type="radio" name="q16" value="D">
+                  <span><strong>D)</strong> Both CPU and memory limits are ignored once the Pod is scheduled.</span>
+                </label></div>
+  <div class="q-feedback" id="fb-16" style="display:none;">
+    <strong>Answer: B</strong> — CPU is compressible (throttled via cgroups); memory is incompressible (exceeding limits triggers kernel <code>OOMKilled</code>).
+  </div>
+</div>
+
+<div class="q-card" id="q-17" data-q="17" data-ans="B">
+  <div class="q-header"><span class="q-badge">Question 17</span></div>
+  <div class="q-prompt"><p>A Pod has two containers:</p>
+<ul><li>Container 1: <code>requests: { cpu: 100m, memory: 128Mi }</code>, <code>limits: { cpu: 100m, memory: 128Mi }</code></li><li>Container 2: <code>requests: { cpu: 100m, memory: 128Mi }</code>, <code>limits: { cpu: 200m, memory: 256Mi }</code></li></ul>
+<p>What QoS class does Kubernetes assign to this Pod?</p></div>
+  <div class="q-opts"><label class="opt" data-q="17" data-opt="A">
+                  <input type="radio" name="q17" value="A">
+                  <span><strong>A)</strong> <code>Guaranteed</code></span>
+                </label>
+<label class="opt" data-q="17" data-opt="B">
+                  <input type="radio" name="q17" value="B">
+                  <span><strong>B)</strong> <code>Burstable</code></span>
+                </label>
+<label class="opt" data-q="17" data-opt="C">
+                  <input type="radio" name="q17" value="C">
+                  <span><strong>C)</strong> <code>BestEffort</code></span>
+                </label>
+<label class="opt" data-q="17" data-opt="D">
+                  <input type="radio" name="q17" value="D">
+                  <span><strong>D)</strong> <code>HighPriority</code></span>
+                </label></div>
+  <div class="q-feedback" id="fb-17" style="display:none;">
+    <strong>Answer: B</strong> — For <code>Guaranteed</code>, <em>every</em> container must have CPU and memory requests equal to limits. Container 2 has <code>request != limit</code>, making the Pod <code>Burstable</code>.
+  </div>
+</div>
+
+<div class="q-card" id="q-18" data-q="18" data-ans="B">
+  <div class="q-header"><span class="q-badge">Question 18</span></div>
+  <div class="q-prompt"><p>A Namespace has a <code>ResourceQuota</code> limiting total <code>requests.cpu</code> and <code>limits.memory</code>, and <strong>no</strong> <code>LimitRange</code> exists in that Namespace. What happens if you try to create a Pod in that Namespace without specifying CPU requests or memory limits?</p></div>
+  <div class="q-opts"><label class="opt" data-q="18" data-opt="A">
+                  <input type="radio" name="q18" value="A">
+                  <span><strong>A)</strong> The Pod is created with default values of <code>0</code>.</span>
+                </label>
+<label class="opt" data-q="18" data-opt="B">
+                  <input type="radio" name="q18" value="B">
+                  <span><strong>B)</strong> The API server rejects Pod creation because every Pod must specify the constrained resource fields when a ResourceQuota is present.</span>
+                </label>
+<label class="opt" data-q="18" data-opt="C">
+                  <input type="radio" name="q18" value="C">
+                  <span><strong>C)</strong> The Pod is created in <code>Pending</code> state until an admin approves it.</span>
+                </label>
+<label class="opt" data-q="18" data-opt="D">
+                  <input type="radio" name="q18" value="D">
+                  <span><strong>D)</strong> Kubernetes automatically assigns it the <code>Guaranteed</code> QoS class.</span>
+                </label></div>
+  <div class="q-feedback" id="fb-18" style="display:none;">
+    <strong>Answer: B</strong> — When a <code>ResourceQuota</code> constrains a compute resource (like <code>requests.cpu</code>), Pods must have that field set (explicitly or via a <code>LimitRange</code> default) or they are rejected by admission control.
+  </div>
+</div>
+
+<div class="q-card" id="q-19" data-q="19" data-ans="B">
+  <div class="q-header"><span class="q-badge">Question 19</span></div>
+  <div class="q-prompt"><p>A container image runs as <code>root</code> (UID <code>0</code>) by default, and its Pod spec sets <code>securityContext.runAsNonRoot: true</code> <strong>without</strong> specifying <code>runAsUser</code>. What happens?</p></div>
+  <div class="q-opts"><label class="opt" data-q="19" data-opt="A">
+                  <input type="radio" name="q19" value="A">
+                  <span><strong>A)</strong> Kubernetes automatically picks UID <code>1000</code> and runs the container.</span>
+                </label>
+<label class="opt" data-q="19" data-opt="B">
+                  <input type="radio" name="q19" value="B">
+                  <span><strong>B)</strong> Kubelet refuses to start the container (<code>CreateContainerConfigError</code>).</span>
+                </label>
+<label class="opt" data-q="19" data-opt="C">
+                  <input type="radio" name="q19" value="C">
+                  <span><strong>C)</strong> The container runs as <code>root</code> with a warning event.</span>
+                </label>
+<label class="opt" data-q="19" data-opt="D">
+                  <input type="radio" name="q19" value="D">
+                  <span><strong>D)</strong> The container runs in <code>privileged</code> mode.</span>
+                </label></div>
+  <div class="q-feedback" id="fb-19" style="display:none;">
+    <strong>Answer: B</strong> — <code>runAsNonRoot: true</code> does not assign a UID; it rejects starting a container whose effective UID is <code>0</code>. You must also set <code>runAsUser</code> (or use an image with a non-root <code>USER</code>).
+  </div>
+</div>
+
+<div class="q-card" id="q-20" data-q="20" data-ans="B">
+  <div class="q-header"><span class="q-badge">Question 20</span></div>
+  <div class="q-prompt"><p>You want to grant ServiceAccount <code>deployer</code> in namespace <code>app</code> permission to read <code>pods</code> <strong>only</strong> inside namespace <code>app</code>, using an existing cluster-wide <code>ClusterRole</code> named <code>view</code>. Which RBAC resource should you create?</p></div>
+  <div class="q-opts"><label class="opt" data-q="20" data-opt="A">
+                  <input type="radio" name="q20" value="A">
+                  <span><strong>A)</strong> A <code>ClusterRoleBinding</code> in namespace <code>app</code></span>
+                </label>
+<label class="opt" data-q="20" data-opt="B">
+                  <input type="radio" name="q20" value="B">
+                  <span><strong>B)</strong> A <code>RoleBinding</code> in namespace <code>app</code> referencing <code>ClusterRole/view</code></span>
+                </label>
+<label class="opt" data-q="20" data-opt="C">
+                  <input type="radio" name="q20" value="C">
+                  <span><strong>C)</strong> A <code>ServiceAccountBinding</code> in namespace <code>app</code></span>
+                </label>
+<label class="opt" data-q="20" data-opt="D">
+                  <input type="radio" name="q20" value="D">
+                  <span><strong>D)</strong> A <code>Role</code> with <code>ClusterRole</code> permissions</span>
+                </label></div>
+  <div class="q-feedback" id="fb-20" style="display:none;">
+    <strong>Answer: B</strong> — Binding a <code>ClusterRole</code> with a namespaced <code>RoleBinding</code> grants the ClusterRole's permissions scoped <strong>only</strong> to that RoleBinding's namespace.
+  </div>
+</div></section><section class="domain-sec"><h2>Domain 5: Services and Networking (Questions 21–25)</h2>
+<div class="q-card" id="q-21" data-q="21" data-ans="B">
+  <div class="q-header"><span class="q-badge">Question 21</span></div>
+  <div class="q-prompt"><p>What is the DNS name to reach a Service named <code>payments</code> in namespace <code>billing</code> from a Pod in namespace <code>frontend</code>?</p></div>
+  <div class="q-opts"><label class="opt" data-q="21" data-opt="A">
+                  <input type="radio" name="q21" value="A">
+                  <span><strong>A)</strong> <code>payments</code></span>
+                </label>
+<label class="opt" data-q="21" data-opt="B">
+                  <input type="radio" name="q21" value="B">
+                  <span><strong>B)</strong> <code>payments.billing.svc.cluster.local</code></span>
+                </label>
+<label class="opt" data-q="21" data-opt="C">
+                  <input type="radio" name="q21" value="C">
+                  <span><strong>C)</strong> <code>billing.payments.pod.cluster.local</code></span>
+                </label>
+<label class="opt" data-q="21" data-opt="D">
+                  <input type="radio" name="q21" value="D">
+                  <span><strong>D)</strong> <code>payments.frontend.svc.cluster.local</code></span>
+                </label></div>
+  <div class="q-feedback" id="fb-21" style="display:none;">
+    <strong>Answer: B</strong> — Across namespaces, use <code>&lt;service&gt;.&lt;namespace&gt;.svc.cluster.local</code> (or <code>&lt;service&gt;.&lt;namespace&gt;</code>).
+  </div>
+</div>
+
+<div class="q-card" id="q-22" data-q="22" data-ans="B">
+  <div class="q-header"><span class="q-badge">Question 22</span></div>
+  <div class="q-prompt"><p>A <code>NodePort</code> Service has <code>port: 80</code>, <code>targetPort: 8080</code>, and <code>nodePort: 30080</code>. External traffic hits <code>&lt;Node2-IP&gt;:30080</code>, while the only matching ready Pod is running on <code>Node1</code>. What happens?</p></div>
+  <div class="q-opts"><label class="opt" data-q="22" data-opt="A">
+                  <input type="radio" name="q22" value="A">
+                  <span><strong>A)</strong> The connection fails because no matching Pod is on <code>Node2</code>.</span>
+                </label>
+<label class="opt" data-q="22" data-opt="B">
+                  <input type="radio" name="q22" value="B">
+                  <span><strong>B)</strong> <code>kube-proxy</code> on <code>Node2</code> forwards the request across the cluster network to the ready Pod on <code>Node1</code> on port <code>8080</code>.</span>
+                </label>
+<label class="opt" data-q="22" data-opt="C">
+                  <input type="radio" name="q22" value="C">
+                  <span><strong>C)</strong> <code>kube-proxy</code> redirects the client to <code>Node1</code>'s IP via HTTP 302.</span>
+                </label>
+<label class="opt" data-q="22" data-opt="D">
+                  <input type="radio" name="q22" value="D">
+                  <span><strong>D)</strong> Kubernetes automatically migrates the Pod from <code>Node1</code> to <code>Node2</code>.</span>
+                </label></div>
+  <div class="q-feedback" id="fb-22" style="display:none;">
+    <strong>Answer: B</strong> — A <code>NodePort</code> opens the port on every Node, and <code>kube-proxy</code> routes traffic to any ready backend Pod in the cluster, regardless of which Node received the connection.
+  </div>
+</div>
+
+<div class="q-card" id="q-23" data-q="23" data-ans="B">
+  <div class="q-header"><span class="q-badge">Question 23</span></div>
+  <div class="q-prompt"><p>Look at the following <code>NetworkPolicy</code> ingress rule:</p>
+<div class="code-wrap"><div class="code-header"><span>yaml</span><button class="copy-btn">Copy</button></div><pre><code>ingress:
+- from:
+  - namespaceSelector:
+      matchLabels:
+        team: alpha
+    podSelector:
+      matchLabels:
+        role: client</code></pre></div>
+<p>Which traffic is allowed by this rule?</p></div>
+  <div class="q-opts"><label class="opt" data-q="23" data-opt="A">
+                  <input type="radio" name="q23" value="A">
+                  <span><strong>A)</strong> Traffic from <strong>any</strong> Pod in a namespace labeled <code>team: alpha</code>, <strong>OR</strong> any Pod labeled <code>role: client</code> in the policy's own namespace.</span>
+                </label>
+<label class="opt" data-q="23" data-opt="B">
+                  <input type="radio" name="q23" value="B">
+                  <span><strong>B)</strong> Traffic <strong>only</strong> from Pods labeled <code>role: client</code> that are inside a namespace labeled <code>team: alpha</code>.</span>
+                </label>
+<label class="opt" data-q="23" data-opt="C">
+                  <input type="radio" name="q23" value="C">
+                  <span><strong>C)</strong> Traffic from all Pods in the cluster except <code>team: alpha</code>.</span>
+                </label>
+<label class="opt" data-q="23" data-opt="D">
+                  <input type="radio" name="q23" value="D">
+                  <span><strong>D)</strong> No traffic at all, because <code>namespaceSelector</code> and <code>podSelector</code> cannot be combined.</span>
+                </label></div>
+  <div class="q-feedback" id="fb-23" style="display:none;">
+    <strong>Answer: B</strong> — Both <code>namespaceSelector</code> and <code>podSelector</code> are under a <strong>single</strong> list item (only one <code>-</code> before <code>namespaceSelector</code>), so they are <strong>ANDed</strong>. Two separate <code>-</code> items would be ORed.
+  </div>
+</div>
+
+<div class="q-card" id="q-24" data-q="24" data-ans="B">
+  <div class="q-header"><span class="q-badge">Question 24</span></div>
+  <div class="q-prompt"><p>If a <code>NetworkPolicy</code> selects a Pod with <code>policyTypes: [&quot;Ingress&quot;]</code> and specifies <code>ingress: []</code> (an empty list), what is the effect?</p></div>
+  <div class="q-opts"><label class="opt" data-q="24" data-opt="A">
+                  <input type="radio" name="q24" value="A">
+                  <span><strong>A)</strong> All incoming traffic to the Pod is allowed.</span>
+                </label>
+<label class="opt" data-q="24" data-opt="B">
+                  <input type="radio" name="q24" value="B">
+                  <span><strong>B)</strong> All incoming traffic to the Pod is <strong>denied</strong> (isolated with no allow rules).</span>
+                </label>
+<label class="opt" data-q="24" data-opt="C">
+                  <input type="radio" name="q24" value="C">
+                  <span><strong>C)</strong> Both incoming and outgoing traffic are denied.</span>
+                </label>
+<label class="opt" data-q="24" data-opt="D">
+                  <input type="radio" name="q24" value="D">
+                  <span><strong>D)</strong> The NetworkPolicy is ignored as invalid.</span>
+                </label></div>
+  <div class="q-feedback" id="fb-24" style="display:none;">
+    <strong>Answer: B</strong> — Selecting a Pod with <code>policyTypes: [&quot;Ingress&quot;]</code> isolates it; an empty <code>ingress: []</code> means zero allow rules, denying all incoming traffic.
+  </div>
+</div>
+
+<div class="q-card" id="q-25" data-q="25" data-ans="A">
+  <div class="q-header"><span class="q-badge">Question 25</span></div>
+  <div class="q-prompt"><p>You created a Service <code>web-svc</code>, and <code>curl http://web-svc</code> times out from a test Pod. Running <code>kubectl get endpoints web-svc</code> returns <code>&lt;none&gt;</code>. Which is the <strong>most likely</strong> cause?</p></div>
+  <div class="q-opts"><label class="opt" data-q="25" data-opt="A">
+                  <input type="radio" name="q25" value="A">
+                  <span><strong>A)</strong> The Service's <code>spec.selector</code> does not match any running/ready Pod's <code>metadata.labels</code> (or the Pods are failing their <code>readinessProbe</code>).</span>
+                </label>
+<label class="opt" data-q="25" data-opt="B">
+                  <input type="radio" name="q25" value="B">
+                  <span><strong>B)</strong> <code>kube-proxy</code> only works with <code>NodePort</code> services.</span>
+                </label>
+<label class="opt" data-q="25" data-opt="C">
+                  <input type="radio" name="q25" value="C">
+                  <span><strong>C)</strong> The Service needs an <code>Ingress</code> object to work inside the cluster.</span>
+                </label>
+<label class="opt" data-q="25" data-opt="D">
+                  <input type="radio" name="q25" value="D">
+                  <span><strong>D)</strong> CoreDNS is missing from the <code>default</code> namespace.</span>
+                </label></div>
+  <div class="q-feedback" id="fb-25" style="display:none;">
+    <strong>Answer: A</strong> — Empty <code>Endpoints</code> almost always means the Service <code>selector</code> doesn't match Pod labels, or the matching Pods are not <code>Ready</code>.
+  </div>
+</div></section>
+  </main>
+</div>
+<script>
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('ckad-theme', next); } catch (e) {}
+  updateThemeBtn();
+}
+function updateThemeBtn() {
+  const btn = document.getElementById('theme-btn');
+  if (!btn) return;
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  btn.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+}
+(function() {
+  try {
+    const saved = localStorage.getItem('ckad-theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+  } catch (e) {}
+  updateThemeBtn();
+})();
+
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('copy-btn')) {
+    const code = e.target.closest('.code-wrap').querySelector('pre code').innerText;
+    navigator.clipboard.writeText(code).then(() => {
+      const orig = e.target.textContent;
+      e.target.textContent = 'Copied!';
+      setTimeout(() => e.target.textContent = orig, 1400);
+    });
+  }
+});
+
+function gradeQuiz() {
+  const cards = document.querySelectorAll('.q-card');
+  let correct = 0, answered = 0;
+  cards.forEach(card => {
+    const q = card.dataset.q;
+    const ans = card.dataset.ans;
+    const chosen = card.querySelector(`input[name="q${q}"]:checked`);
+    const fb = document.getElementById(`fb-${q}`);
+    card.classList.remove('correct', 'wrong');
+    card.querySelectorAll('.opt').forEach(o => o.classList.remove('is-correct', 'is-wrong'));
+
+    const rightOpt = card.querySelector(`.opt[data-opt="${ans}"]`);
+    if (rightOpt) rightOpt.classList.add('is-correct');
+
+    if (chosen) {
+      answered++;
+      if (chosen.value === ans) {
+        correct++;
+        card.classList.add('correct');
+      } else {
+        card.classList.add('wrong');
+        const wrongOpt = card.querySelector(`.opt[data-opt="${chosen.value}"]`);
+        if (wrongOpt) wrongOpt.classList.add('is-wrong');
+      }
+    } else {
+      card.classList.add('wrong');
+    }
+    fb.style.display = 'block';
+  });
+  const total = cards.length;
+  const pct = Math.round((correct / total) * 100);
+  document.getElementById('score-text').innerHTML =
+    `<strong>Score: ${correct} / ${total} (${pct}%)</strong> &nbsp;|&nbsp; Answered: ${answered}/${total}`;
+}
+
+function resetQuiz() {
+  document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+  document.querySelectorAll('.q-card').forEach(c => c.classList.remove('correct', 'wrong'));
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('is-correct', 'is-wrong'));
+  document.querySelectorAll('.q-feedback').forEach(f => f.style.display = 'none');
+  document.getElementById('score-text').textContent = 'Select your answers and click Check All Answers.';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
